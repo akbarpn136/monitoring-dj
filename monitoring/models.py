@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import URLValidator
 
 
 # Create your models here.
@@ -17,3 +18,13 @@ class DataAngin(models.Model):
 
     def __str__(self):
         return 'Grup kecepatan: ' + str(self.grup_kecepatan)
+
+
+class PilihanVisualisasi(models.Model):
+    nama = models.CharField(verbose_name='Nama Grafik', max_length=180)
+    info = models.CharField(verbose_name='Info Singkat', max_length=200)
+    deskripsi = models.TextField(verbose_name='Deskripsi Grafik')
+    thumb = models.TextField(verbose_name='Link Thumbnail', validators=[URLValidator()])
+
+    def __str__(self):
+        return self.nama
