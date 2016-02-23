@@ -85,6 +85,18 @@ DATABASES = {
     }
 }
 
+'''
+Contoh pengaturan db.cnf
+--------------------------
+
+# db.cnf
+[client]
+database = nama_database
+user = user_database
+password = password_database
+default-character-set = utf8
+'''
+
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
