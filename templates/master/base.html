@@ -67,7 +67,37 @@
                     </div>
                 </div>
             {% endblock %}
-            {% block isi %}{% endblock %}
+
+            {% block isi %}
+                <div class="gap-sedang"></div>
+                <div class="ui three cards">
+                    {% for vis in visualisasi %}
+                        <div class="teal card">
+                            <div class="image">
+                                <img src="{{ vis.thumb }}">
+                            </div>
+
+                            <div class="content">
+                                <div class="header">{{ vis.nama }}</div>
+                                <div class="meta">
+                                    <span>{{ vis.info }}</span>
+                                </div>
+
+                                <div class="description">
+                                    {{ vis.deskripsi|truncatewords:10 }}
+                                </div>
+                            </div>
+
+                            <div class="extra content">
+                                <button class="ui google plus fluid button">
+                                    <i class="unhide fitted icon"></i>
+                                    OBSERVASI
+                                </button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endblock %}
         </div>
     {% endblock %}
 
