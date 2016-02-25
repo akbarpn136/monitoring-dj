@@ -35,6 +35,8 @@ class PilihanVisualisasi(models.Model):
     info = models.CharField(verbose_name='Info Singkat', max_length=200)
     deskripsi = models.TextField(verbose_name='Deskripsi Grafik')
     thumb = models.TextField(verbose_name='Link Thumbnail', validators=[URLValidator()])
+    daerah = models.ForeignKey(DaerahObjek, verbose_name='Daerah', null=True, blank=True, on_delete=models.SET_NULL,
+                               default=1)
 
     def __str__(self):
         return self.nama
