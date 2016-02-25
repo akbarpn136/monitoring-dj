@@ -38,5 +38,22 @@ class PilihanVisualisasi(models.Model):
     daerah = models.ForeignKey(DaerahObjek, verbose_name='Daerah', null=True, blank=True, on_delete=models.SET_NULL,
                                default=1)
 
+    KOSONG = ''
+    ATRIBUT_ANGIN = 'ATR'
+    PDF_ANGIN = 'PDF'
+    WINDROSE = 'WRS'
+    WATERFALL = 'WTR'
+    RMS = 'RMS'
+    PILIHAN_JENIS = (
+        (KOSONG, '-----'),
+        (ATRIBUT_ANGIN, 'Atribut Angin'),
+        (PDF_ANGIN, 'Grafik PDF'),
+        (WINDROSE, 'Grafik Windrose'),
+        (WATERFALL, 'Grafik Waterfall'),
+        (RMS, 'Grafik RMS'),
+    )
+
+    jenis = models.CharField(verbose_name='Jenis Grafik', max_length=3, default=KOSONG, choices=PILIHAN_JENIS)
+
     def __str__(self):
         return self.nama
