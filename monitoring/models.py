@@ -3,6 +3,14 @@ from django.core.validators import URLValidator
 
 
 # Create your models here.
+class DaerahObjek(models.Model):
+    nama_objek = models.CharField(verbose_name='Nama Observasi Objek', max_length=200)
+    nama_daerah = models.CharField(verbose_name='Daerah', max_length=100)
+
+    def __str__(self):
+        return self.nama_objek
+
+
 class DataAngin(models.Model):
     tanggal = models.DateField(verbose_name='Tanggal Pengukuran')
     waktu = models.TimeField(verbose_name='Waktu Pengukuran', max_length=100)
@@ -15,6 +23,8 @@ class DataAngin(models.Model):
     akselerator3 = models.FloatField(verbose_name='Akselerator 3')
     akselerator4 = models.FloatField(verbose_name='Akselerator 4')
     akselerator5 = models.FloatField(verbose_name='Akselerator 5')
+    daerah = models.ForeignKey(DaerahObjek, verbose_name='Daerah', null=True, blank=True, on_delete=models.SET_NULL,
+                               default=1)
 
     def __str__(self):
         return 'Grup kecepatan: ' + str(self.grup_kecepatan)
