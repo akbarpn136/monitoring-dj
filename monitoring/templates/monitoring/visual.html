@@ -30,7 +30,7 @@
             }
         };
 
-        $.get('/monitor/1/atribut/', function(data){
+        $.get('/monitor/'+ {{ daerah_tertentu }} + '/atribut/', function(data){
             $.each(data, function(a, b){
                 key_x.push(b.fields.tanggal+' '+b.fields.waktu);
                 key_y.push(b.fields.kecepatan);
