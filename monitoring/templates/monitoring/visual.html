@@ -1,7 +1,44 @@
 {% extends 'master/base.html' %}
+{% load staticfiles %}
 
 {% block title %}
-    Aplikasi Monitoring BBTA3
+    {{ visual.nama }}|Aplikasi Monitoring BBTA3
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'plotly-latest.min.js' %}"></script>
+    <script type="text/javascript">
+        graph=document.getElementById("ATR");
+        var key_x = [];
+        var key_y = [];
+
+        var trace1 = [{
+            x: key_x,
+            y: key_y,
+            type: 'scatter',
+            name: 'Kecepatan angin'
+        }];
+
+        var layout = {
+            title: 'Perubahan Kecepatan Angin',
+            showlegend: false,
+            xaxis: {
+                title: 'Waktu'
+            },
+            yaxis: {
+                title: 'Kecepatan angin (m/s)'
+            }
+        };
+
+        $.get('/monitor/1/atribut/', function(data){
+            $.each(data, function(a, b){
+                key_x.push(b.fields.tanggal+' '+b.fields.waktu);
+                key_y.push(b.fields.kecepatan);
+            });
+
+            Plotly.newPlot(graph, trace1, layout, {showLink: false, displaylogo: false, scrollZoom: true});
+        });
+    </script>
 {% endblock %}
 
 {% block isi %}
@@ -11,4 +48,6 @@
         <p>{{ visual.deskripsi }}</p>
     </div>
     <div class="gap-kecil"></div>
+    <div class="ui text large loader">Loading</div>
+    <div id="{{ visual.jenis }}"></div>
 {% endblock %}
