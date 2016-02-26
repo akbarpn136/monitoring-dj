@@ -28,23 +28,13 @@ def index(request, pk=None):
     return render(request, 'master/base.html', data)
 
 
-def visual(request, pk):
+def visual(request, pk, daerah):
     data_visual = get_object_or_404(PilihanVisualisasi, pk=pk)
-
-    if data_visual.jenis == 'ATR':
-        script = 'graph=document.getElementById("' + data_visual.jenis + '");' \
-                 'Plotly.plot( graph, [{' \
-                 'x: [1, 2, 3, 4, 5],' \
-                 'y: [1, 2, 4, 8, 16] }], {' \
-                 'margin: { t: 0 } } );'
-
-    else:
-        script = ''
 
     data = {
         'daerah': data_daerah,
         'visual': data_visual,
-        'script': script
+        'daerah_tertentu': daerah
     }
 
     return render(request, 'monitoring/visual.html', data)
