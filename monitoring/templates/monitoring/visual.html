@@ -36,6 +36,7 @@
                 key_y.push(b.fields.kecepatan);
             });
 
+            $("div#loader").hide();
             Plotly.newPlot(graph, trace1, layout, {showLink: false, displaylogo: false, scrollZoom: true});
         });
     </script>
@@ -48,6 +49,6 @@
         <p>{{ visual.deskripsi }}</p>
     </div>
     <div class="gap-kecil"></div>
-    <div class="ui text large loader">Loading</div>
+    <div id="loader" class="ui text active large inverted loader">Loading</div>
     <div id="{{ visual.jenis }}"></div>
 {% endblock %}
