@@ -9,7 +9,7 @@ data_daerah = DaerahObjek.objects.all()
 # Create your views here.
 def json_atr_angin(request, pk):
     temp_output = serializers.serialize('json', DataAngin.objects.filter(daerah=pk),
-                                        fields=('tanggal', 'waktu', 'arah', 'kecepatan'))
+                                        fields=('tanggal', 'waktu', 'arah', 'kecepatan', 'akselerator5'))
     print(temp_output)
     return HttpResponse(temp_output, content_type='application/json')
 
