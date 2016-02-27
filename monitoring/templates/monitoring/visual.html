@@ -11,7 +11,7 @@
 {% block js %}
     <script src="{% static 'plotly-latest.min.js' %}"></script>
     <script src="{% static 'zebra/zebra_datepicker.js' %}"></script>
-    <script src="{% static 'atribut_angin.js' %}"></script>
+    {% block skrip_grafik %}<script src="{% static 'atribut_angin.js' %}"></script>{% endblock %}
 {% endblock %}
 
 {% block isi %}
