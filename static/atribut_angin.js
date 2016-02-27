@@ -4,19 +4,20 @@
 $(document).ready(function(){
     $("input#in_tgl").Zebra_DatePicker({
         show_icon: false,
-        onSelect: function(){
+        onSelect: function(a){
             var inpt = '<div class="ui icon input">';
             inpt += '<input id="in_tgl_akhir" type="text" placeholder="Tanggal akhir">';
             inpt += '<i class="calendar icon"></i>';
             inpt += '</div>';
 
+            $("span#data_tgl_awl").attr("data-value", a);
             $("div#tanggal_akhir").append().html(inpt);
             $("input#in_tgl_akhir").Zebra_DatePicker({
                 show_icon: false,
                 onClear: function(){
                     $("div#jenis_grafik").empty();
                 },
-                onSelect: function(){
+                onSelect: function(b){
                     var slct = '<select id="selek" class="ui search dropdown">';
                     slct += '<option value="0">Jenis grafik</option>';
                     slct += '<option value="1">Kecepatan Angin</option>';
@@ -24,6 +25,7 @@ $(document).ready(function(){
                     slct += '<option value="3">Data Getaran</option>';
                     slct += '</select>';
 
+                    $("span#data_tgl_akr").attr("data-value", b);
                     $("div#jenis_grafik").append().html(slct);
                     $("select#selek").dropdown({
                         placeholder: false,
@@ -66,7 +68,7 @@ $(document).ready(function(){
 
                                 $("div#loader").addClass('active');
 
-                                $.get('/monitor/'+ daerah_tertentu1 + '/atribut/', function(data){
+                                $.get('/monitor/' + daerah_tertentu1 + '/atribut/' + $("span#data_tgl_awl").attr("data-value") + '/' + $("span#data_tgl_akr").attr("data-value"), function(data){
                                     $.each(data, function(a, b){
                                         key_x1.push(b.fields.tanggal+' '+b.fields.waktu);
                                         key_y1.push(b.fields.kecepatan);
@@ -115,7 +117,7 @@ $(document).ready(function(){
 
                                 $("div#loader").addClass('active');
 
-                                $.get('/monitor/'+ daerah_tertentu2 + '/atribut/', function(data){
+                                $.get('/monitor/'+ daerah_tertentu2 + '/atribut/' + $("span#data_tgl_awl").attr("data-value") + '/' + $("span#data_tgl_akr").attr("data-value"), function(data){
                                     $.each(data, function(a, b){
                                         key_x2.push(b.fields.tanggal+' '+b.fields.waktu);
                                         key_y2.push(b.fields.arah);
@@ -164,7 +166,7 @@ $(document).ready(function(){
 
                                 $("div#loader").addClass('active');
 
-                                $.get('/monitor/'+ daerah_tertentu3 + '/atribut/', function(data){
+                                $.get('/monitor/'+ daerah_tertentu3 + '/atribut/' + $("span#data_tgl_awl").attr("data-value") + '/' + $("span#data_tgl_akr").attr("data-value"), function(data){
                                     $.each(data, function(a, b){
                                         key_x3.push(b.fields.tanggal+' '+b.fields.waktu);
                                         key_y3.push(b.fields.akselerator5);
