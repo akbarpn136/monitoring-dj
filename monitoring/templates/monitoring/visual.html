@@ -4,42 +4,14 @@
 {% block title %}
     {{ visual.nama }}|Aplikasi Monitoring BBTA3
 {% endblock %}
+{% block style %}
+    <link rel="stylesheet" type="text/css" href="{% static 'zebra/bootstrap.css' %}">
+{% endblock %}
 
 {% block js %}
     <script src="{% static 'plotly-latest.min.js' %}"></script>
-    <script type="text/javascript">
-        graph=document.getElementById("ATR");
-        var key_x = [];
-        var key_y = [];
-
-        var trace1 = [{
-            x: key_x,
-            y: key_y,
-            type: 'scatter',
-            name: 'Kecepatan angin'
-        }];
-
-        var layout = {
-            title: 'Perubahan Kecepatan Angin',
-            showlegend: false,
-            xaxis: {
-                title: 'Waktu'
-            },
-            yaxis: {
-                title: 'Kecepatan angin (m/s)'
-            }
-        };
-
-        $.get('/monitor/'+ {{ daerah_tertentu }} + '/atribut/', function(data){
-            $.each(data, function(a, b){
-                key_x.push(b.fields.tanggal+' '+b.fields.waktu);
-                key_y.push(b.fields.kecepatan);
-            });
-
-            $("div#loader").hide();
-            Plotly.newPlot(graph, trace1, layout, {showLink: false, displaylogo: false, scrollZoom: true});
-        });
-    </script>
+    <script src="{% static 'zebra/zebra_datepicker.js' %}"></script>
+    <script src="{% static 'atribut_angin.js' %}"></script>
 {% endblock %}
 
 {% block isi %}
@@ -47,8 +19,27 @@
     <div class="ui stacked teal segment">
         <h4 class="ui header">{{ visual.nama }}</h4>
         <p>{{ visual.deskripsi }}</p>
+        <span id="data_daerah" data-value="{{ daerah_tertentu }}"></span>
+        <span id="data_title_x" data-value=""></span>
+        <span id="data_title_y" data-value=""></span>
+        <span id="data_judul_besar" data-value=""></span>
+
+        <form class="ui form">
+            <div class="fields">
+                <div id="tanggal_awal" class="field">
+                    <div class="ui icon input">
+                        <input id="in_tgl" type="text" placeholder="Tanggal awal">
+                        <i class="calendar icon"></i>
+                    </div>
+                </div>
+                <div id="tanggal_akhir" class="field">
+                </div>
+                <div id="jenis_grafik" class="field">
+                </div>
+            </div>
+        </form>
     </div>
     <div class="gap-kecil"></div>
-    <div id="loader" class="ui text active large inverted loader">Loading</div>
     <div id="{{ visual.jenis }}"></div>
+    <div id="loader" class="ui text large inverted loader" style="margin-top: 120px;">Loading</div>
 {% endblock %}
