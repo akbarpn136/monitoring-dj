@@ -2,9 +2,9 @@ from django.conf.urls import url
 
 from . import views
 
-
 urlpatterns = [
-    url(r'^(?P<pk>[0-9]+)/atribut/$', views.json_atr_angin, name='json_angin'),
+    url(r'^(?P<pk>[0-9]+)/atribut/(?P<dt_frm>\d{4}-\d{2}-\d{2})/(?P<dt_to>\d{4}-\d{2}-\d{2})$', views.json_atr_angin,
+        name='json_angin'),
 
     url(r'^$', views.index, name='halaman_utama'),
     url(r'^(?P<pk>[0-9]+)/$', views.index, name='halaman_utama_pk'),
