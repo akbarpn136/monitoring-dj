@@ -10,12 +10,14 @@ $(document).ready(function(){
             inpt += '<i class="calendar icon"></i>';
             inpt += '</div>';
 
+            $("div#ATR").empty();
             $("span#data_tgl_awl").attr("data-value", a);
             $("div#tanggal_akhir").append().html(inpt);
             $("input#in_tgl_akhir").Zebra_DatePicker({
                 show_icon: false,
                 onClear: function(){
                     $("div#jenis_grafik").empty();
+                    $("div#ATR").empty();
                 },
                 onSelect: function(b){
                     var slct = '<select id="selek" class="ui search dropdown">';
@@ -25,6 +27,7 @@ $(document).ready(function(){
                     slct += '<option value="3">Data Getaran</option>';
                     slct += '</select>';
 
+                    $("div#ATR").empty();
                     $("span#data_tgl_akr").attr("data-value", b);
                     $("div#jenis_grafik").append().html(slct);
                     $("select#selek").dropdown({
@@ -188,6 +191,7 @@ $(document).ready(function(){
         },
         onClear: function(){
             $("div#tanggal_akhir").empty();
+            $("div#ATR").empty();
         }
     });
 });
