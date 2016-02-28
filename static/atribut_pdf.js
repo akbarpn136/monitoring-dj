@@ -32,7 +32,8 @@ $(document).ready(function(){
                     $.get('/monitor/' + daerah_tertentu1 + '/pdf/' + $("span#data_tgl_awl").attr("data-value") + '/' + selector_tgl_akr.attr("data-value"), function(data){
                         var trace1 = {
                             x: data[0].velo,
-                            name: 'Probabilitas Kecepatan Angin',
+                            histnorm: 'probability density',
+                            name: 'Histogram Kecepatan',
                             marker: {color: '#00b5ad'}, // teal
                             type: 'histogram'
                         };
@@ -40,12 +41,14 @@ $(document).ready(function(){
                         var trace2 = {
                             x: data[0].velo,
                             y: data[0].veloy,
+                            name: 'PDF - Weibull',
+                            marker: {color: '#db2828'}, // red
                             type: 'scatter'
                         };
 
                         console.log(data[0]);
 
-                        var data_pdf = [trace2];
+                        var data_pdf = [trace1, trace2];
 
                         var layout = {
                             title: 'GRAFIK DISTRIBUSI KECEPATAN ANGIN',
