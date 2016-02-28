@@ -10,6 +10,7 @@ $(document).ready(function(){
             inpt += '<i class="calendar icon"></i>';
             inpt += '</div>';
 
+            $("div#WRS").empty();
             $("span#data_tgl_awl").attr("data-value", a);
             $("div#tanggal_akhir").append().html(inpt);
             $("input#in_tgl_akhir").Zebra_DatePicker({
@@ -23,6 +24,7 @@ $(document).ready(function(){
                     var daerah_tertentu1 = $("span#data_daerah").attr("data-value");
                     var graph1=document.getElementById("WRS");
 
+                    $("div#WRS").empty();
                     selector_tgl_akr.attr("data-value", b);
 
                     $("div#loader").addClass('active');
@@ -31,8 +33,8 @@ $(document).ready(function(){
                         var trace1 = {
                             r: data[0].trace1,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '0-0.5 m/s',
-                            marker: {color: 'rgb(0,51,0)'},
+                            name: '0-0.5 m/s', // purple
+                            marker: {color: '#a333c8'},
                             type: 'area'
                         };
 
@@ -40,7 +42,7 @@ $(document).ready(function(){
                             r: data[0].trace2,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '0.5-1 m/s',
-                            marker: {color: 'rgb(51,0,0)'},
+                            marker: {color: 'a5673f'}, // brown
                             type: 'area'
                         };
 
@@ -48,7 +50,7 @@ $(document).ready(function(){
                             r: data[0].trace3,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '1-1.5 m/s',
-                            marker: {color: 'rgb(51,51,0)'},
+                            marker: {color: '#21ba45'}, // green
                             type: 'area'
                         };
 
@@ -56,7 +58,7 @@ $(document).ready(function(){
                             r: data[0].trace4,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '1.5-2 m/s',
-                            marker: {color: 'rgb(102,0,0)'},
+                            marker: {color: '#6435c9'}, // violet
                             type: 'area'
                         };
 
@@ -64,7 +66,7 @@ $(document).ready(function(){
                             r: data[0].trace5,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '2-2.5 m/s',
-                            marker: {color: 'rgb(204,255,0)'},
+                            marker: {color: '#fbbd08'}, // yellow
                             type: 'area'
                         };
 
@@ -72,7 +74,7 @@ $(document).ready(function(){
                             r: data[0].trace6,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '2.5-3 m/s',
-                            marker: {color: 'rgb(255,153,255)'},
+                            marker: {color: '#2185d0'}, // blue
                             type: 'area'
                         };
 
@@ -80,7 +82,7 @@ $(document).ready(function(){
                             r: data[0].trace7,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '3-3.5 m/s',
-                            marker: {color: 'rgb(204,255,255)'},
+                            marker: {color: '#b5cc18'}, // olive
                             type: 'area'
                         };
 
@@ -88,7 +90,7 @@ $(document).ready(function(){
                             r: data[0].trace8,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '3.5-4 m/s',
-                            marker: {color: 'rgb(102,102,255)'},
+                            marker: {color: '#767676'}, // grey
                             type: 'area'
                         };
 
@@ -96,7 +98,7 @@ $(document).ready(function(){
                             r: data[0].trace9,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '4-4.5 m/s',
-                            marker: {color: 'rgb(121,189,143)'},
+                            marker: {color: '#00b5ad'}, // teal
                             type: 'area'
                         };
 
@@ -104,7 +106,7 @@ $(document).ready(function(){
                             r: data[0].trace10,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '4.5-5 m/s',
-                            marker: {color: 'rgb(0,163,136)'},
+                            marker: {color: '#f2711c'}, // orange
                             type: 'area'
                         };
 
@@ -112,7 +114,7 @@ $(document).ready(function(){
                             r: data[0].trace11,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '5-5.5 m/s',
-                            marker: {color: 'rgb(92,131,47)'},
+                            marker: {color: '#1b1c1d'}, // black
                             type: 'area'
                         };
 
@@ -120,7 +122,7 @@ $(document).ready(function(){
                             r: data[0].trace12,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '5.5-6 m/s',
-                            marker: {color: 'rgb(56,37,19)'},
+                            marker: {color: '#e03997'}, // pink
                             type: 'area'
                         };
 
@@ -128,7 +130,7 @@ $(document).ready(function(){
                             r: data[0].trace13,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
                             name: '> 6 m/s',
-                            marker: {color: 'rgb(99,166,159)'},
+                            marker: {color: '#db2828'}, // red
                             type: 'area'
                         };
 
