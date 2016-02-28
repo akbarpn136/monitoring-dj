@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.core import serializers
 
+from scipy.stats import exponweib
+
 from .models import DaerahObjek, PilihanVisualisasi, DataAngin
 
 import json
+import numpy as np
 
 data_daerah = DaerahObjek.objects.all()
 
@@ -233,6 +236,23 @@ def json_rose_angin(request, pk, dt_frm, dt_to):
     return HttpResponse(json.dumps(obj), content_type='application/json')
 
 
+def json_pdf_angin(request, pk, dt_frm, dt_to):
+    grp_v = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).order_by('kecepatan')
+
+    list_kecepatan = np.array([o.kecepatan for o in grp_v])
+    list_kecepatan_norm = exponweib.pdf(list_kecepatan, 3, 2)
+
+    dist_kecepatan = list_kecepatan.tolist()
+    dist_kecepatan_norm = list_kecepatan_norm.tolist()
+
+    obj = [{
+        'velo': dist_kecepatan,
+        'veloy': dist_kecepatan_norm,
+    }]
+
+    return HttpResponse(json.dumps(obj), content_type='application/json')
+
+
 def index(request, pk=None):
     if pk is None:
         return redirect('halaman_utama_pk', 1)
@@ -260,5 +280,7 @@ def visual(request, pk, daerah):
         return render(request, 'monitoring/visual.html', data)
     elif data_visual.jenis == 'WRS':
         return render(request, 'monitoring/visual_windrose.html', data)
+    elif data_visual.jenis == 'PDF':
+        return render(request, 'monitoring/visual_pdf.html', data)
     else:
         pass
