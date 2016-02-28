@@ -33,7 +33,7 @@ $(document).ready(function(){
                         var trace1 = {
                             r: data[0].trace1,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '0-0.5 m/s', // purple
+                            name: '0.0-0.5 m/s', // purple
                             marker: {color: '#a333c8'},
                             type: 'area'
                         };
@@ -41,7 +41,7 @@ $(document).ready(function(){
                         var trace2 = {
                             r: data[0].trace2,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '0.5-1 m/s',
+                            name: '0.5-1.0 m/s',
                             marker: {color: 'a5673f'}, // brown
                             type: 'area'
                         };
@@ -49,7 +49,7 @@ $(document).ready(function(){
                         var trace3 = {
                             r: data[0].trace3,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '1-1.5 m/s',
+                            name: '1.0-1.5 m/s',
                             marker: {color: '#21ba45'}, // green
                             type: 'area'
                         };
@@ -57,7 +57,7 @@ $(document).ready(function(){
                         var trace4 = {
                             r: data[0].trace4,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '1.5-2 m/s',
+                            name: '1.5-2.0 m/s',
                             marker: {color: '#6435c9'}, // violet
                             type: 'area'
                         };
@@ -65,7 +65,7 @@ $(document).ready(function(){
                         var trace5 = {
                             r: data[0].trace5,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '2-2.5 m/s',
+                            name: '2.0-2.5 m/s',
                             marker: {color: '#fbbd08'}, // yellow
                             type: 'area'
                         };
@@ -73,7 +73,7 @@ $(document).ready(function(){
                         var trace6 = {
                             r: data[0].trace6,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '2.5-3 m/s',
+                            name: '2.5-3.0 m/s',
                             marker: {color: '#2185d0'}, // blue
                             type: 'area'
                         };
@@ -81,7 +81,7 @@ $(document).ready(function(){
                         var trace7 = {
                             r: data[0].trace7,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '3-3.5 m/s',
+                            name: '3.0-3.5 m/s',
                             marker: {color: '#b5cc18'}, // olive
                             type: 'area'
                         };
@@ -89,7 +89,7 @@ $(document).ready(function(){
                         var trace8 = {
                             r: data[0].trace8,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '3.5-4 m/s',
+                            name: '3.5-4.0 m/s',
                             marker: {color: '#767676'}, // grey
                             type: 'area'
                         };
@@ -97,7 +97,7 @@ $(document).ready(function(){
                         var trace9 = {
                             r: data[0].trace9,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '4-4.5 m/s',
+                            name: '4.0-4.5 m/s',
                             marker: {color: '#00b5ad'}, // teal
                             type: 'area'
                         };
@@ -105,7 +105,7 @@ $(document).ready(function(){
                         var trace10 = {
                             r: data[0].trace10,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '4.5-5 m/s',
+                            name: '4.5-5.0 m/s',
                             marker: {color: '#f2711c'}, // orange
                             type: 'area'
                         };
@@ -113,7 +113,7 @@ $(document).ready(function(){
                         var trace11 = {
                             r: data[0].trace11,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '5-5.5 m/s',
+                            name: '5.0-5.5 m/s',
                             marker: {color: '#1b1c1d'}, // black
                             type: 'area'
                         };
@@ -121,7 +121,7 @@ $(document).ready(function(){
                         var trace12 = {
                             r: data[0].trace12,
                             t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                            name: '5.5-6 m/s',
+                            name: '5.5-6.0 m/s',
                             marker: {color: '#e03997'}, // pink
                             type: 'area'
                         };
