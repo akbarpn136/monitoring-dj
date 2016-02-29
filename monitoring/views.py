@@ -240,6 +240,38 @@ def json_pdf_angin(request, pk, dt_frm, dt_to):
     grp_v = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).order_by('kecepatan')
 
     list_kecepatan = np.array([o.kecepatan for o in grp_v])
+    list_kecepatan_norm = exponweib.pdf(list_kecepatan, *exponweib.fit(list_kecepatan, 1, 1.55, scale=0, loc=0))
+
+    dist_kecepatan = list_kecepatan.tolist()
+    dist_kecepatan_norm = list_kecepatan_norm.tolist()
+
+    obj = [{
+        'velo': dist_kecepatan,
+        'veloy': dist_kecepatan_norm,
+    }]
+
+    return HttpResponse(json.dumps(obj), content_type='application/json')
+
+
+def json_wtr_angin(request, pk, dt_frm, dt_to):
+    grp_v = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).order_by('kecepatan')
+
+    grp_v_0_05 = grp_v.filter(kecepatan__gte=0, kecepatan__lt=0.5)
+    grp_v_05_1 = grp_v.filter(kecepatan__gte=0.5, kecepatan__lt=1)
+    grp_v_1_15 = grp_v.filter(kecepatan__gte=1, kecepatan__lt=1.5)
+    grp_v_15_2 = grp_v.filter(kecepatan__gte=1.5, kecepatan__lt=2)
+    grp_v_2_25 = grp_v.filter(kecepatan__gte=2, kecepatan__lt=2.5)
+    grp_v_25_3 = grp_v.filter(kecepatan__gte=2.5, kecepatan__lt=3)
+    grp_v_3_35 = grp_v.filter(kecepatan__gte=3, kecepatan__lt=3.5)
+    grp_v_35_4 = grp_v.filter(kecepatan__gte=3.5, kecepatan__lt=4)
+    grp_v_4_45 = grp_v.filter(kecepatan__gte=4, kecepatan__lt=4.5)
+    grp_v_45_5 = grp_v.filter(kecepatan__gte=4.5, kecepatan__lt=5)
+    grp_v_5_55 = grp_v.filter(kecepatan__gte=5, kecepatan__lt=5.5)
+    grp_v_55_6 = grp_v.filter(kecepatan__gte=5.5, kecepatan__lt=6)
+    grp_v_6_65 = grp_v.filter(kecepatan__gte=6, kecepatan__lt=6.5)
+    grp_v_65_7 = grp_v.filter(kecepatan__gte=6.5, kecepatan__lt=7)
+
+    list_kecepatan = np.array([o.kecepatan for o in grp_v])
     list_kecepatan_norm = exponweib.pdf(list_kecepatan, *exponweib.fit(list_kecepatan, 1, 1, scale=2, loc=0))
 
     dist_kecepatan = list_kecepatan.tolist()
