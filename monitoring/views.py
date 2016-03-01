@@ -240,7 +240,8 @@ def json_pdf_angin(request, pk, dt_frm, dt_to):
     grp_v = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).order_by('kecepatan')
 
     list_kecepatan = np.array([o.kecepatan for o in grp_v])
-    list_kecepatan_norm = exponweib.pdf(list_kecepatan, *exponweib.fit(list_kecepatan, 1, 1.55, scale=0, loc=0))
+    mean = np.mean(list_kecepatan)
+    list_kecepatan_norm = exponweib.pdf(list_kecepatan, *exponweib.fit(list_kecepatan, 1, mean, scale=0, loc=0))
 
     dist_kecepatan = list_kecepatan.tolist()
     dist_kecepatan_norm = list_kecepatan_norm.tolist()
