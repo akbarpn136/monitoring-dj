@@ -48,8 +48,8 @@ $(document).ready(function(){
                                     var tr = {
                                         r: v.slice(0, 8),
                                         t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                                        name: v.slice(8),
-                                        marker: {color: '#'+k}, // purple
+                                        name: v.slice(8,9),
+                                        marker: {color: '#'+ v.slice(9)}, // purple
                                         type: 'area'
                                     };
 
