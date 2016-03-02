@@ -6,11 +6,13 @@ urlpatterns = [
     url(r'^(?P<pk>[0-9]+)/atribut/(?P<dt_frm>\d{4}-\d{2}-\d{2})/(?P<dt_to>\d{4}-\d{2}-\d{2})$', views.json_atr_angin,
         name='json_angin'),
     url(r'^(?P<pk>[0-9]+)/rose/(?P<dt_frm>\d{4}-\d{2}-\d{2})/(?P<dt_to>\d{4}-\d{2}-\d{2})/'
-        r'(?P<vmax>[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)/(?P<step>[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)/$', views.json_rose_angin,
+        r'(?P<vmax>[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)/(?P<step>[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)/$',
+        views.json_rose_angin,
         name='json_rose'),
     url(r'^(?P<pk>[0-9]+)/pdf/(?P<dt_frm>\d{4}-\d{2}-\d{2})/(?P<dt_to>\d{4}-\d{2}-\d{2})$', views.json_pdf_angin,
         name='json_pdf'),
-    url(r'^(?P<pk>[0-9]+)/pdf/(?P<dt_frm>\d{4}-\d{2}-\d{2})/(?P<dt_to>\d{4}-\d{2}-\d{2})$', views.json_wtr_angin,
+    url(r'^(?P<pk>[0-9]+)/wtr/(?P<dt_frm>\d{4}-\d{2}-\d{2})/(?P<dt_to>\d{4}-\d{2}-\d{2})/'
+        r'(?P<grup>[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)/(?P<step>[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)/$', views.json_wtr_angin,
         name='json_wtr'),
 
     url(r'^$', views.index, name='halaman_utama'),
