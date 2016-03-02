@@ -71,6 +71,24 @@
 
             {% block isi %}
                 <div class="gap-sedang"></div>
+                {% if messages %}
+                    {% for message in messages %}
+                    <div{% if message.tags %} class="ui {{ message.tags }} message"{% endif %}>
+                        <i class="close icon"></i>
+                        <div class="header">
+                            PERINGATAN
+                        </div>
+                       {{ message }}
+                    </div>
+                    {% endfor %}
+                    <script type="text/javascript">
+                        $(document).ready(function(){
+                            $('.message .close').on('click', function(){
+                                $(this).closest('.message').transition('fade');
+                            });
+                        });
+                    </script>
+                {% endif %}
                 <div class="ui three cards">
                     {% for vis in visualisasi %}
                         <div class="teal card">
