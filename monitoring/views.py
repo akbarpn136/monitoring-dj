@@ -1,20 +1,21 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.core import serializers
 
-from scipy.stats import exponweib
-
 from .models import DaerahObjek, PilihanVisualisasi, DataAngin
 
 import json
 import random
+import operator
 import numpy as np
+import scipy.fftpack as ft
+from scipy.stats import exponweib
 
 data_daerah = DaerahObjek.objects.all()
 
 
 # Create your views here.
 def gen_hex_colour_code():
-    return ''.join([random.choice('0123456789ABCDEF') for x in range(6)])
+    return ''.join([random.choice('123456789ABCDEF') for x in range(5)])
 
 
 def json_atr_angin(request, pk, dt_frm, dt_to):
@@ -24,14 +25,15 @@ def json_atr_angin(request, pk, dt_frm, dt_to):
     return HttpResponse(temp_output, content_type='application/json')
 
 
-def json_rose_angin(request, pk, dt_frm, dt_to, vmax=7, step=0.5):
+def json_rose_angin(request, pk, dt_frm, dt_to, vmax, step):
     grp_v_tot = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).count()
 
     if grp_v_tot > 0:
         k = {}
+        count = 0
         for lop in np.arange(0, float(vmax), float(step)):
             grp_v_i = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to) \
-                .filter(grup_kecepatan__gte=lop, grup_kecepatan__lt=lop + 0.5)
+                .filter(grup_kecepatan__gte=lop, grup_kecepatan__lt=lop + float(step))
 
             grp_v_i_ut = (grp_v_i.filter(kompas='UT').count() / grp_v_tot) * 100
             grp_v_i_tl = (grp_v_i.filter(kompas='TL').count() / grp_v_tot) * 100
@@ -43,14 +45,17 @@ def json_rose_angin(request, pk, dt_frm, dt_to, vmax=7, step=0.5):
             grp_v_i_bl = (grp_v_i.filter(kompas='BL').count() / grp_v_tot) * 100
 
             list_grp_v_i = [grp_v_i_ut, grp_v_i_tl, grp_v_i_tm, grp_v_i_tg, grp_v_i_sl, grp_v_i_bd,
-                            grp_v_i_br, grp_v_i_bl, str(lop)+'-'+str(lop+0.5)+' m/s']
+                            grp_v_i_br, grp_v_i_bl, str(lop)+'-'+str(lop + float(step))+' m/s', str(count) +
+                            gen_hex_colour_code()]
 
-            k[gen_hex_colour_code()] = list_grp_v_i
+            count += 1
+            k[str(count)] = list_grp_v_i
 
     else:
         k = {}
 
-    return HttpResponse(json.dumps(k), content_type='application/json')
+    k_sorted = sorted(k.items(), key=operator.itemgetter(0))
+    return HttpResponse(json.dumps(dict(k_sorted)), content_type='application/json')
 
 
 def json_pdf_angin(request, pk, dt_frm, dt_to):
@@ -71,34 +76,38 @@ def json_pdf_angin(request, pk, dt_frm, dt_to):
     return HttpResponse(json.dumps(obj), content_type='application/json')
 
 
-def json_wtr_angin(request, pk, dt_frm, dt_to):
-    grp_v = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).order_by('kecepatan')
+def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step):
+    grp_v = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to)
 
-    grp_v_0_05 = grp_v.filter(kecepatan__gte=0, kecepatan__lt=0.5)
-    grp_v_05_1 = grp_v.filter(kecepatan__gte=0.5, kecepatan__lt=1)
-    grp_v_1_15 = grp_v.filter(kecepatan__gte=1, kecepatan__lt=1.5)
-    grp_v_15_2 = grp_v.filter(kecepatan__gte=1.5, kecepatan__lt=2)
-    grp_v_2_25 = grp_v.filter(kecepatan__gte=2, kecepatan__lt=2.5)
-    grp_v_25_3 = grp_v.filter(kecepatan__gte=2.5, kecepatan__lt=3)
-    grp_v_3_35 = grp_v.filter(kecepatan__gte=3, kecepatan__lt=3.5)
-    grp_v_35_4 = grp_v.filter(kecepatan__gte=3.5, kecepatan__lt=4)
-    grp_v_4_45 = grp_v.filter(kecepatan__gte=4, kecepatan__lt=4.5)
-    grp_v_45_5 = grp_v.filter(kecepatan__gte=4.5, kecepatan__lt=5)
-    grp_v_5_55 = grp_v.filter(kecepatan__gte=5, kecepatan__lt=5.5)
-    grp_v_55_6 = grp_v.filter(kecepatan__gte=5.5, kecepatan__lt=6)
-    grp_v_6_65 = grp_v.filter(kecepatan__gte=6, kecepatan__lt=6.5)
-    grp_v_65_7 = grp_v.filter(kecepatan__gte=6.5, kecepatan__lt=7)
+    obj = {}
 
-    list_kecepatan = np.array([o.kecepatan for o in grp_v])
-    list_kecepatan_norm = exponweib.pdf(list_kecepatan, *exponweib.fit(list_kecepatan, 1, 1, scale=2, loc=0))
+    for i in np.arange(0, float(grup), float(step)):
+        grp_v_i = grp_v.filter(kecepatan__gte=i, kecepatan__lt=i + float(step))
 
-    dist_kecepatan = list_kecepatan.tolist()
-    dist_kecepatan_norm = list_kecepatan_norm.tolist()
+        grp_v_i_acc1 = grp_v_i.values_list('akselerator1', flat=True)
+        grp_v_i_acc2 = grp_v_i.values_list('akselerator2', flat=True)
+        grp_v_i_acc3 = grp_v_i.values_list('akselerator3', flat=True)
+        grp_v_i_acc4 = grp_v_i.values_list('akselerator4', flat=True)
+        grp_v_i_acc5 = grp_v_i.values_list('akselerator5', flat=True)
 
-    obj = [{
-        'velo': dist_kecepatan,
-        'veloy': dist_kecepatan_norm,
-    }]
+        arr_grp_v_i_acc = np.matrix([grp_v_i_acc1, grp_v_i_acc2, grp_v_i_acc3, grp_v_i_acc4, grp_v_i_acc5])
+        z = arr_grp_v_i_acc.transpose()
+        # sample spacing
+        t = 1.0/800.0
+
+        if z.size > 0:
+            zf = 2.0/z.size * np.abs(ft.fft(z)[:z.size/2])
+        else:
+            zf = np.zeros(0)
+
+        xf = np.linspace(0.0, 1.0/(2.0*t), z.size/2)
+        yf = [i+0.5]*z.size
+
+        ukuran = z.size
+        nama = str(i)+'-'+str(i+0.5)
+
+        obj['water'] = [nama, xf.tolist(), yf, zf.flatten().tolist()]
+        obj['ukuran'] = [ukuran]
 
     return HttpResponse(json.dumps(obj), content_type='application/json')
 
@@ -132,5 +141,7 @@ def visual(request, pk, daerah):
         return render(request, 'monitoring/visual_windrose.html', data)
     elif data_visual.jenis == 'PDF':
         return render(request, 'monitoring/visual_pdf.html', data)
+    elif data_visual.jenis == 'WTR':
+        return render(request, 'monitoring/visual_wtr.html', data)
     else:
-        pass
+        return redirect('halaman_utama')
