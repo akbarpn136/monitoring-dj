@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.core import serializers
+from django.contrib import messages
 
 from .models import DaerahObjek, PilihanVisualisasi, DataAngin
 
@@ -144,4 +145,5 @@ def visual(request, pk, daerah):
     elif data_visual.jenis == 'WTR':
         return render(request, 'monitoring/visual_wtr.html', data)
     else:
+        messages.warning(request, "Jenis grafik tidak ditemukan.")
         return redirect('halaman_utama')
