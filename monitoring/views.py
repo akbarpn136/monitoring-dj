@@ -77,13 +77,13 @@ def json_pdf_angin(request, pk, dt_frm, dt_to):
     return HttpResponse(json.dumps(obj), content_type='application/json')
 
 
-def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step):
+def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step, kompas='TM'):
     grp_v = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to)
 
     obj = {}
 
     for i in np.arange(0, float(grup), float(step)):
-        grp_v_i = grp_v.filter(kecepatan__gte=i, kecepatan__lt=i + float(step))
+        grp_v_i = grp_v.filter(kecepatan__gte=i, kecepatan__lt=i + float(step)).filter(kompas=kompas)
 
         grp_v_i_acc1 = grp_v_i.values_list('akselerator1', flat=True)
         grp_v_i_acc2 = grp_v_i.values_list('akselerator2', flat=True)
@@ -93,21 +93,30 @@ def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step):
 
         arr_grp_v_i_acc = np.matrix([grp_v_i_acc1, grp_v_i_acc2, grp_v_i_acc3, grp_v_i_acc4, grp_v_i_acc5])
         z = arr_grp_v_i_acc.transpose()
-        # sample spacing
-        t = 1.0/800.0
 
-        if z.size > 0:
-            zf = 2.0/z.size * np.abs(ft.fft(z)[:z.size/2])
-        else:
-            zf = np.zeros(0)
+        fs = 15/7   # sampling rate
+        # ts = 1.0/fs  # sampling interval
+        # t = np.arange(0, 2, ts)  # time vector
 
-        xf = np.linspace(0.0, 1.0/(2.0*t), z.size/2)
-        yf = [i+0.5]*z.size
+        # ff = 5   # frequency of the signal
+        # y = np.sin(2*np.pi*ff*t)
+
+        # n = len(y)  # length of the signal
+        n = z.size  # length of the signal
+        k = np.arange(n)
+        ti = n/fs
+        frq = k/ti  # two sides frequency range
+        frq = frq[:n/2]  # one side frequency range
+
+        zf = abs(ft.fft(z))  # fft computing and normalization
+        zf = zf[:n/2]
+
+        yf = [i+float(step)]*n
 
         nama = str(i)+'-'+str(i + float(step))
         warna = '#' + str(int(i))+gen_hex_colour_code()
 
-        obj[str(int(i))] = [nama, warna, xf.tolist(), yf, zf.flatten().tolist()]
+        obj[str(int(i))] = [nama, warna, frq.tolist(), yf, zf.flatten().tolist()]
 
     obj_sorted = sorted(obj.items(), key=operator.itemgetter(0))
     return HttpResponse(json.dumps(dict(obj_sorted)), content_type='application/json')
