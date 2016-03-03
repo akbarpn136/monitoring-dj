@@ -10,21 +10,21 @@ $(document).ready(function(){
             inpt += '<i class="calendar icon"></i>';
             inpt += '</div>';
 
-            $("div#WRS").empty();
+            $("div#WTR").empty();
             $("span#data_tgl_awl").attr("data-value", a);
             $("div#tanggal_akhir").append().html(inpt);
             $("input#in_tgl_akhir").Zebra_DatePicker({
                 show_icon: false,
                 onClear: function(){
                     $("div#jenis_grafik").empty();
-                    $("div#WRS").empty();
+                    $("div#WTR").empty();
                 },
                 onSelect: function(b){
                     var selector_tgl_akr = $("span#data_tgl_akr");
                     var daerah_tertentu1 = $("span#data_daerah").attr("data-value");
-                    var graph1=document.getElementById("WRS");
+                    var graph1=document.getElementById("WTR");
 
-                    $("div#WRS").empty();
+                    $("div#WTR").empty();
                     $("div#v_step").empty();
                     selector_tgl_akr.attr("data-value", b);
 
@@ -37,35 +37,61 @@ $(document).ready(function(){
 
                         $("div#v_step").append().html(inpt_v_step);
                         $("input#inpt_vstep").change(function(){
-                            $("div#WRS").empty();
+                            $("div#WTR").empty();
                             var nilai_inpt_vstep = $(this).val();
 
                             $("div#loader").addClass('active');
 
-                            $.get('/monitor/' + daerah_tertentu1 + '/rose/' + $("span#data_tgl_awl").attr("data-value") + '/' + selector_tgl_akr.attr("data-value") + '/' + nilai_inpt_vmax + '/' + nilai_inpt_vstep, function(data){
-                                var dt_rose = [];
-                                $.each(data, function(k, v){
+                            $.get('/monitor/' + daerah_tertentu1 + '/wtr/' + $("span#data_tgl_awl").attr("data-value") + '/' + selector_tgl_akr.attr("data-value") + '/' + nilai_inpt_vmax + '/' + nilai_inpt_vstep, function(data){
+                                var dt_wtr = [];
+                                $.each(data, function(ky, v){
                                     var tr = {
-                                        r: v.slice(0, 8),
-                                        t: ['North', 'N-E', 'East', 'S-E', 'South', 'S-W', 'West', 'N-W'],
-                                        name: v.slice(8),
-                                        marker: {color: '#'+k}, // purple
-                                        type: 'area'
+                                        x: v[3],
+                                        y: v[2],
+                                        z: v[4],
+                                        mode: 'lines',
+                                        name: v[0],
+                                        marker: {
+                                            color: v[1],
+                                            size: 9,
+                                            symbol: 'circle',
+                                            line: {
+                                              color: 'rgb(0,0,0)',
+                                              width: 2
+                                            }
+                                        },
+                                        line: {
+                                            color: v[1],
+                                            width: 1
+                                        },
+                                        type: 'scatter3d'
                                     };
 
-                                    dt_rose.push(tr);
+                                    dt_wtr.push(tr);
                                 });
 
                                 var layout = {
-                                    title: 'GRAFIK WIND ROSE',
+                                    title: 'GRAFIK Water Fall',
                                     font: {size: 16},
-                                    legend: {font: {size: 16}},
-                                    radialaxis: {ticksuffix: '%'},
-                                    orientation: 270
+                                    margin: {
+                                        l: 0,
+                                        r: 0,
+                                        b: 0,
+                                        t: 65
+                                    },
+                                    xaxis: {
+                                        title: 'Grup kecepatan'
+                                    },
+                                    yaxis: {
+                                        title: 'Frekuensi'
+                                    },
+                                    zaxis: {
+                                        title: 'Amplitudo'
+                                    }
                                 };
 
                                 $("div#loader").removeClass('active');
-                                Plotly.newPlot(graph1, dt_rose, layout);
+                                Plotly.newPlot(graph1, dt_wtr, layout);
                             });
                         });
                     });
@@ -75,7 +101,7 @@ $(document).ready(function(){
         },
         onClear: function(){
             $("div#tanggal_akhir").empty();
-            $("div#WRS").empty();
+            $("div#WTR").empty();
         }
     });
 });
