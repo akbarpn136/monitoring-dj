@@ -104,13 +104,13 @@ def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step):
         xf = np.linspace(0.0, 1.0/(2.0*t), z.size/2)
         yf = [i+0.5]*z.size
 
-        ukuran = z.size
-        nama = str(i)+'-'+str(i+0.5)
+        nama = str(i)+'-'+str(i + float(step))
+        warna = '#' + str(int(i))+gen_hex_colour_code()
 
-        obj['water'] = [nama, xf.tolist(), yf, zf.flatten().tolist()]
-        obj['ukuran'] = [ukuran]
+        obj[str(int(i))] = [nama, warna, xf.tolist(), yf, zf.flatten().tolist()]
 
-    return HttpResponse(json.dumps(obj), content_type='application/json')
+    obj_sorted = sorted(obj.items(), key=operator.itemgetter(0))
+    return HttpResponse(json.dumps(dict(obj_sorted)), content_type='application/json')
 
 
 def index(request, pk=None):
