@@ -103,10 +103,13 @@ def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step, kompas='TM'):
 
         # n = len(y)  # length of the signal
         n = z.size  # length of the signal
-        k = np.arange(n)
-        ti = n/fs
-        frq = k/ti  # two sides frequency range
-        frq = frq[:n/2]  # one side frequency range
+        # k = np.arange(n)
+        # ti = n/fs
+        # frq = k/ti  # two sides frequency range
+        # frq = frq[:n/2]  # one side frequency range
+
+        freq = ft.fftfreq(n, 0.2)
+        freq = freq[:n/2]
 
         zf = abs(ft.fft(z))  # fft computing and normalization
         zf = zf[:n/2]
@@ -116,7 +119,7 @@ def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step, kompas='TM'):
         nama = str(i)+'-'+str(i + float(step))
         warna = '#' + str(int(i))+gen_hex_colour_code()
 
-        obj[str(int(i))] = [nama, warna, frq.tolist(), yf, zf.flatten().tolist()]
+        obj[str(int(i))] = [nama, warna, freq.tolist(), yf, zf.flatten().tolist()]
 
     obj_sorted = sorted(obj.items(), key=operator.itemgetter(0))
     return HttpResponse(json.dumps(dict(obj_sorted)), content_type='application/json')
