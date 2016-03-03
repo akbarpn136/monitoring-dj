@@ -39,59 +39,76 @@ $(document).ready(function(){
                         $("input#inpt_vstep").change(function(){
                             $("div#WTR").empty();
                             var nilai_inpt_vstep = $(this).val();
+                            var selektor_kompas = '<select id="slk_kmps" class="ui dropdown">';
+                            selektor_kompas += '<option value="">Arah angin</option>';
+                            selektor_kompas += '<option value="UT">Utara</option>';
+                            selektor_kompas += '<option value="TL">Timur Laut</option>';
+                            selektor_kompas += '<option value="TM">Timur</option>';
+                            selektor_kompas += '<option value="TG">Tenggara</option>';
+                            selektor_kompas += '<option value="SL">Selatan</option>';
+                            selektor_kompas += '<option value="BD">Barat Daya</option>';
+                            selektor_kompas += '<option value="BR">Barat</option>';
+                            selektor_kompas += '<option value="BL">Barat Laut</option>';
+                            selektor_kompas += '</select>';
 
-                            $("div#loader").addClass('active');
+                            $("div#kompas").append().html(selektor_kompas);
+                            $("select#slk_kmps").dropdown({
+                                placeholder: false,
+                                onChange: function(dt_kmps){
+                                    $("div#WTR").empty();
+                                    $("div#loader").addClass('active');
+                                    $.get('/monitor/' + daerah_tertentu1 + '/wtr/' + $("span#data_tgl_awl").attr("data-value") + '/' + selector_tgl_akr.attr("data-value") + '/' + nilai_inpt_vmax + '/' + nilai_inpt_vstep + '/' + dt_kmps, function(data){
+                                        var dt_wtr = [];
+                                        $.each(data, function(ky, v){
+                                            var tr = {
+                                                x: v[3],
+                                                y: v[2],
+                                                z: v[4],
+                                                mode: 'lines',
+                                                name: v[0],
+                                                marker: {
+                                                    color: v[1],
+                                                    size: 9,
+                                                    symbol: 'circle',
+                                                    line: {
+                                                      color: 'rgb(0,0,0)',
+                                                      width: 2
+                                                    }
+                                                },
+                                                line: {
+                                                    color: v[1],
+                                                    width: 1
+                                                },
+                                                type: 'scatter3d'
+                                            };
 
-                            $.get('/monitor/' + daerah_tertentu1 + '/wtr/' + $("span#data_tgl_awl").attr("data-value") + '/' + selector_tgl_akr.attr("data-value") + '/' + nilai_inpt_vmax + '/' + nilai_inpt_vstep, function(data){
-                                var dt_wtr = [];
-                                $.each(data, function(ky, v){
-                                    var tr = {
-                                        x: v[3],
-                                        y: v[2],
-                                        z: v[4],
-                                        mode: 'lines',
-                                        name: v[0],
-                                        marker: {
-                                            color: v[1],
-                                            size: 9,
-                                            symbol: 'circle',
-                                            line: {
-                                              color: 'rgb(0,0,0)',
-                                              width: 2
+                                            dt_wtr.push(tr);
+                                        });
+
+                                        var layout = {
+                                            title: 'GRAFIK Water Fall',
+                                            font: {size: 16},
+                                            margin: {
+                                                l: 0,
+                                                r: 0,
+                                                b: 0,
+                                                t: 65
+                                            },
+                                            xaxis: {
+                                                title: 'Grup kecepatan'
+                                            },
+                                            yaxis: {
+                                                title: 'Frekuensi'
+                                            },
+                                            zaxis: {
+                                                title: 'Amplitudo'
                                             }
-                                        },
-                                        line: {
-                                            color: v[1],
-                                            width: 1
-                                        },
-                                        type: 'scatter3d'
-                                    };
+                                        };
 
-                                    dt_wtr.push(tr);
-                                });
-
-                                var layout = {
-                                    title: 'GRAFIK Water Fall',
-                                    font: {size: 16},
-                                    margin: {
-                                        l: 0,
-                                        r: 0,
-                                        b: 0,
-                                        t: 65
-                                    },
-                                    xaxis: {
-                                        title: 'Grup kecepatan'
-                                    },
-                                    yaxis: {
-                                        title: 'Frekuensi'
-                                    },
-                                    zaxis: {
-                                        title: 'Amplitudo'
-                                    }
-                                };
-
-                                $("div#loader").removeClass('active');
-                                Plotly.newPlot(graph1, dt_wtr, layout);
+                                        $("div#loader").removeClass('active');
+                                        Plotly.newPlot(graph1, dt_wtr, layout);
+                                    });
+                                }
                             });
                         });
                     });
