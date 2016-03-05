@@ -3,9 +3,9 @@ from django.core import serializers
 from django.contrib import messages
 
 from .models import DaerahObjek, PilihanVisualisasi, DataAngin
+from .tambahan import gen_hex_colour_code
 
 import json
-import random
 import operator
 import numpy as np
 import scipy.fftpack as ft
@@ -15,10 +15,6 @@ data_daerah = DaerahObjek.objects.all()
 
 
 # Create your views here.
-def gen_hex_colour_code():
-    return ''.join([random.choice('123456789ABCDEF') for x in range(5)])
-
-
 def json_atr_angin(request, pk, dt_frm, dt_to):
     temp_output = serializers.serialize('json', DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm,
                                                                                            tanggal__lte=dt_to),
