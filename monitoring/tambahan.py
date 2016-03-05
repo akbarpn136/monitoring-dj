@@ -1,5 +1,5 @@
 import random
-from scipy.signal import butter, lfilter
+from scipy.signal import butter, lfilter, filtfilt
 
 
 # fs : Sample rate
@@ -19,5 +19,6 @@ def butter_bandpass(lowcut, highcut, fs, order=5):
 
 def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-    y = lfilter(b, a, data)
+    # y = lfilter(b, a, data)
+    y = filtfilt(b, a, data)
     return y
