@@ -3,7 +3,7 @@ from django.core import serializers
 from django.contrib import messages
 
 from .models import DaerahObjek, PilihanVisualisasi, DataAngin
-from .tambahan import gen_hex_colour_code
+from .tambahan import gen_hex_colour_code, butter_bandpass_filter
 
 import json
 import operator
@@ -90,7 +90,10 @@ def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step, kompas='TM'):
         arr_grp_v_i_acc = np.matrix([grp_v_i_acc1, grp_v_i_acc2, grp_v_i_acc3, grp_v_i_acc4, grp_v_i_acc5])
         z = arr_grp_v_i_acc.transpose()
 
-        fs = 15/7   # sampling rate
+        samp_rate = 0.2
+        fs = 1/samp_rate   # sampling rate
+        fc1 = 0.1   # First Cutoff Frequency
+        fc2 = 0.4   # Second Cutoff Frequency
         # ts = 1.0/fs  # sampling interval
         # t = np.arange(0, 2, ts)  # time vector
 
@@ -107,7 +110,8 @@ def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step, kompas='TM'):
         freq = ft.fftfreq(n, 0.2)
         freq = freq[:n/2]
 
-        zf = abs(ft.fft(z))  # fft computing and normalization
+        z = butter_bandpass_filter(z, fc1, fc2, fs, order=10)
+        zf = abs(ft.fft(z)/n)  # fft computing and normalization
         zf = zf[:n/2]
 
         yf = [i+float(step)]*n
