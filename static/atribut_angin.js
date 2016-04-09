@@ -47,7 +47,6 @@ $(document).ready(function(){
                                 ttl_y1.attr("data-value", "Kecepatan Angin (m/s)");
                                 jdl_bsr1.attr("data-value", "GRAFIK KECEPATAN ANGIN");
 
-                                var daerah_tertentu1 = $("span#data_daerah").attr("data-value");
                                 var title_x1 = ttl_x1.attr("data-value");
                                 var title_y1 = ttl_y1.attr("data-value");
                                 var judul_besar1 = jdl_bsr1.attr("data-value");
@@ -71,7 +70,7 @@ $(document).ready(function(){
 
                                 $("div#loader").addClass('active');
 
-                                $.get('/monitor/' + daerah_tertentu1 + '/atribut/' + $("span#data_tgl_awl").attr("data-value") + '/' + $("span#data_tgl_akr").attr("data-value"), function(data){
+                                $.get('/monitor/' + 'atribut/' + $("span#data_tgl_awl").attr("data-value") + '/' + $("span#data_tgl_akr").attr("data-value"), function(data){
                                     $.each(data, function(a, b){
                                         key_x1.push(b.fields.tanggal+' '+b.fields.waktu);
                                         key_y1.push(b.fields.kecepatan);

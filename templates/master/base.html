@@ -29,20 +29,9 @@
                       <img src="{% static 'drawing.svg' %}" alt="Logo aplikasi monitoring" style="width: 100%;">
                     </div>
 
-                    <a id="browse" class="item">Pengamatan <i class="dropdown icon"></i></a>
+                    <a href="{% url 'halaman_utama' %}" class="item"><i class="home icon"></i>Utama</a>
                     <a id="rlt" class="item">Real Time</a>
                     <a id="about" class="item">Tentang aplikasi</a>
-                    <div class="ui fluid popup bottom left transition hidden">
-                        <div class="ui four column relaxed equal height divided grid">
-                            {% for d in daerah %}
-                                <div class="column">
-                                    <div class="ui link list">
-                                        <a href="{% url 'halaman_utama_pk' pk=d.pk %}" class="item">{{ d.nama_objek }} ({{ d.nama_daerah }})</a>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    </div>
 
                     <div id="modal_about" class="ui modal">
                         <div class="header">
@@ -108,7 +97,7 @@
                             </div>
 
                             <div class="extra content">
-                                <a href="{% url 'halaman_visual' pk=vis.pk daerah=daerah_pk %}" class="ui google plus fluid button">
+                                <a href="{% url 'halaman_visual' pk=vis.pk %}" class="ui google plus fluid button">
                                     <i class="unhide fitted icon"></i>
                                     OBSERVASI
                                 </a>

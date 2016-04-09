@@ -21,7 +21,6 @@ $(document).ready(function(){
                 },
                 onSelect: function(b){
                     var selector_tgl_akr = $("span#data_tgl_akr");
-                    var daerah_tertentu1 = $("span#data_daerah").attr("data-value");
                     var graph1=document.getElementById("PDF");
 
                     $("div#PDF").empty();
@@ -29,7 +28,7 @@ $(document).ready(function(){
 
                     $("div#loader").addClass('active');
 
-                    $.get('/monitor/' + daerah_tertentu1 + '/pdf/' + $("span#data_tgl_awl").attr("data-value") + '/' + selector_tgl_akr.attr("data-value"), function(data){
+                    $.get('/monitor/' + 'pdf/' + $("span#data_tgl_awl").attr("data-value") + '/' + selector_tgl_akr.attr("data-value"), function(data){
                         var trace1 = {
                             x: data[0].velo,
                             histnorm: 'probability density',

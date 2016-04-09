@@ -21,7 +21,6 @@ $(document).ready(function(){
                 },
                 onSelect: function(b){
                     var selector_tgl_akr = $("span#data_tgl_akr");
-                    var daerah_tertentu1 = $("span#data_daerah").attr("data-value");
                     var graph1=document.getElementById("WRS");
 
                     $("div#WRS").empty();
@@ -42,7 +41,7 @@ $(document).ready(function(){
 
                             $("div#loader").addClass('active');
 
-                            $.get('/monitor/' + daerah_tertentu1 + '/rose/' + $("span#data_tgl_awl").attr("data-value") + '/' + selector_tgl_akr.attr("data-value") + '/' + nilai_inpt_vmax + '/' + nilai_inpt_vstep, function(data){
+                            $.get('/monitor/' + 'rose/' + $("span#data_tgl_awl").attr("data-value") + '/' + selector_tgl_akr.attr("data-value") + '/' + nilai_inpt_vmax + '/' + nilai_inpt_vstep, function(data){
                                 var dt_rose = [];
                                 $.each(data, function(k, v){
                                     var tr = {

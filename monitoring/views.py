@@ -15,21 +15,20 @@ data_daerah = DaerahObjek.objects.all()
 
 
 # Create your views here.
-def json_atr_angin(request, pk, dt_frm, dt_to):
-    temp_output = serializers.serialize('json', DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm,
-                                                                                           tanggal__lte=dt_to),
+def json_atr_angin(request, dt_frm, dt_to):
+    temp_output = serializers.serialize('json', DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to),
                                         fields=('tanggal', 'waktu', 'arah', 'kecepatan', 'akselerator5'))
     return HttpResponse(temp_output, content_type='application/json')
 
 
-def json_rose_angin(request, pk, dt_frm, dt_to, vmax, step):
-    grp_v_tot = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).count()
+def json_rose_angin(request, dt_frm, dt_to, vmax, step):
+    grp_v_tot = DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).count()
 
     if grp_v_tot > 0:
         k = {}
         count = 0
         for lop in np.arange(0, float(vmax), float(step)):
-            grp_v_i = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to) \
+            grp_v_i = DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to) \
                 .filter(grup_kecepatan__gte=lop, grup_kecepatan__lt=lop + float(step))
 
             grp_v_i_ut = (grp_v_i.filter(kompas='UT').count() / grp_v_tot) * 100
@@ -55,8 +54,8 @@ def json_rose_angin(request, pk, dt_frm, dt_to, vmax, step):
     return HttpResponse(json.dumps(dict(k_sorted)), content_type='application/json')
 
 
-def json_pdf_angin(request, pk, dt_frm, dt_to):
-    grp_v = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).order_by('kecepatan')
+def json_pdf_angin(request, dt_frm, dt_to):
+    grp_v = DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).order_by('kecepatan')
 
     list_kecepatan = np.array([o.kecepatan for o in grp_v])
     mean = np.mean(list_kecepatan)
@@ -73,8 +72,8 @@ def json_pdf_angin(request, pk, dt_frm, dt_to):
     return HttpResponse(json.dumps(obj), content_type='application/json')
 
 
-def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step, kompas='TM'):
-    grp_v = DataAngin.objects.filter(daerah=pk).filter(tanggal__gte=dt_frm, tanggal__lte=dt_to)
+def json_wtr_angin(request, dt_frm, dt_to, grup, step, kompas='TM'):
+    grp_v = DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to)
 
     obj = {}
 
@@ -110,7 +109,7 @@ def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step, kompas='TM'):
         freq = ft.fftfreq(n, 0.2)
         freq = freq[:n/2]
 
-        z = butter_bandpass_filter(z, fc1, fc2, fs, order=10)
+        z = butter_bandpass_filter(z, fc1, fc2, fs, order=5)
         zf = abs(ft.fft(z)/n)  # fft computing and normalization
         zf = zf[:n/2]
 
@@ -125,27 +124,22 @@ def json_wtr_angin(request, pk, dt_frm, dt_to, grup, step, kompas='TM'):
     return HttpResponse(json.dumps(dict(obj_sorted)), content_type='application/json')
 
 
-def index(request, pk=None):
-    if pk is None:
-        return redirect('halaman_utama_pk', 1)
-    else:
-        data_visualisasi = PilihanVisualisasi.objects.filter(daerah=pk)
-        data = {
-            'daerah': data_daerah,
-            'daerah_pk': pk,
-            'visualisasi': data_visualisasi,
-        }
+def index(request):
+    data_visualisasi = PilihanVisualisasi.objects.all()
+    data = {
+        'daerah': data_daerah,
+        'visualisasi': data_visualisasi,
+    }
 
     return render(request, 'master/base.html', data)
 
 
-def visual(request, pk, daerah):
+def visual(request, pk):
     data_visual = get_object_or_404(PilihanVisualisasi, pk=pk)
 
     data = {
         'daerah': data_daerah,
         'visual': data_visual,
-        'daerah_tertentu': daerah
     }
 
     if data_visual.jenis == 'ATR':

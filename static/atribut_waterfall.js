@@ -21,7 +21,6 @@ $(document).ready(function(){
                 },
                 onSelect: function(b){
                     var selector_tgl_akr = $("span#data_tgl_akr");
-                    var daerah_tertentu1 = $("span#data_daerah").attr("data-value");
                     var graph1=document.getElementById("WTR");
 
                     $("div#WTR").empty();
@@ -57,7 +56,7 @@ $(document).ready(function(){
                                 onChange: function(dt_kmps){
                                     $("div#WTR").empty();
                                     $("div#loader").addClass('active');
-                                    $.get('/monitor/' + daerah_tertentu1 + '/wtr/' + $("span#data_tgl_awl").attr("data-value") + '/' + selector_tgl_akr.attr("data-value") + '/' + nilai_inpt_vmax + '/' + nilai_inpt_vstep + '/' + dt_kmps, function(data){
+                                    $.get('/monitor/' + 'wtr/' + $("span#data_tgl_awl").attr("data-value") + '/' + selector_tgl_akr.attr("data-value") + '/' + nilai_inpt_vmax + '/' + nilai_inpt_vstep + '/' + dt_kmps, function(data){
                                         var dt_wtr = [];
                                         $.each(data, function(ky, v){
                                             var tr = {
