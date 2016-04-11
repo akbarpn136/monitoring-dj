@@ -1,0 +1,6 @@
+{% extends 'monitoring/visual.html' %}
+{% load staticfiles %}
+{% block skrip_grafik %}<script src="{% static 'atribut_rms.js' %}"></script>{% endblock %}
+{% block pilihan_visual_form %}
+<input id="vmax" type="text" placeholder="Kecepatan maksimum">
+{% endblock %}
