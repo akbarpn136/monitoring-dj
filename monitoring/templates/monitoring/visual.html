@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block isi %}
-    <div class="gap-sedang"></div>
+    <div class="gap-besar" style="margin-top: 50px;"></div>
     <div class="ui stacked teal segment">
         <h4 class="ui header">{{ visual.nama }}</h4>
         <p>{{ visual.deskripsi }}</p>
@@ -28,10 +28,12 @@
         <form class="ui form">
             <div class="fields">
                 <div id="tanggal_awal" class="field">
+                    {% block pilihan_visual_form %}
                     <div class="ui icon input">
                         <input id="in_tgl" type="text" placeholder="Tanggal awal">
                         <i class="calendar icon"></i>
                     </div>
+                    {% endblock %}
                 </div>
                 <div id="tanggal_akhir" class="field">
                 </div>
