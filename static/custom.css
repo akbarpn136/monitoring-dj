@@ -4,3 +4,7 @@ body{background-color: #374140;}
 .gap-besar{padding: 15px;}
 .gap-lebih-besar{padding: 20px;}
 .gap-paling-besar{padding: 25px;}
+
+.ui.menu .item{
+    position: static !important;
+}
