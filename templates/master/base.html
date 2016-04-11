@@ -27,9 +27,13 @@
             </div>
 
             <div class="right menu">
-                <a href="{% url 'halaman_utama' %}" class="{% if '/monitor/' in request.path %}active red{% endif %} item"><i class="home icon"></i>Utama</a>
-                <a id="rlt" class="item"><i class="signal icon"></i>Real Time</a>
-                <a id="about" class="item"><i class="fork icon"></i>Tentang aplikasi</a>
+                <a href="{% url 'halaman_utama' %}" class="{% if '/monitor/' in request.path %}active red{% endif %} mobile hidden item"><i class="home icon"></i>Utama</a>
+                <a id="rlt" class="mobile hidden item"><i class="signal icon"></i>Real Time</a>
+                <a id="about" class="mobile hidden item"><i class="fork icon"></i>Tentang aplikasi</a>
+
+                <div class="mobile only item">
+                    <a class="ui basic red icon button"><i class="sidebar icon"></i></a>
+                </div>
             </div>
 
             <div id="modal_about" class="ui modal">
@@ -77,7 +81,7 @@
                         });
                     </script>
                 {% endif %}
-                <div class="ui five stackable cards">
+                <div class="ui five doubling cards">
                     {% for vis in visualisasi %}
                         <div class="teal card">
                             <div class="image">
@@ -93,7 +97,7 @@
 
                             <div class="extra content">
                                 <a href="{% url 'halaman_visual' pk=vis.pk %}" class="ui google plus fluid button">
-                                    <i class="unhide fitted icon"></i>
+                                    <i class="unhide icon"></i>
                                     OBSERVASI
                                 </a>
                             </div>
