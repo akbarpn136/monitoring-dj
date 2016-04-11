@@ -41,7 +41,7 @@ def json_rose_angin(request, dt_frm, dt_to, vmax, step):
             grp_v_i_bl = (grp_v_i.filter(kompas='BL').count() / grp_v_tot) * 100
 
             list_grp_v_i = [grp_v_i_ut, grp_v_i_tl, grp_v_i_tm, grp_v_i_tg, grp_v_i_sl, grp_v_i_bd,
-                            grp_v_i_br, grp_v_i_bl, str(lop)+'-'+str(lop + float(step))+' m/s', str(count) +
+                            grp_v_i_br, grp_v_i_bl, str(lop) + '-' + str(lop + float(step)) + ' m/s', str(count) +
                             gen_hex_colour_code()]
 
             count += 1
@@ -57,9 +57,14 @@ def json_rose_angin(request, dt_frm, dt_to, vmax, step):
 def json_pdf_angin(request, dt_frm, dt_to):
     grp_v = DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).order_by('kecepatan')
 
-    list_kecepatan = np.array([o.kecepatan for o in grp_v])
-    mean = np.mean(list_kecepatan)
-    list_kecepatan_norm = exponweib.pdf(list_kecepatan, *exponweib.fit(list_kecepatan, 1, mean, scale=0, loc=0))
+    list_kecepatan = np.array([o.grup_kecepatan for o in grp_v])
+    # mean = np.mean(list_kecepatan)
+    stddev = np.std(list_kecepatan, ddof=1)
+    shape_k = (0.9874 / stddev) ** 1.0983
+    x = 1 + (1 / shape_k)  # refeerence http://www.wind-power-program.com/wind_statistics.htm#top
+    shape_gamma = 0.1693 * x ** 4 - 1.1495 * x ** 3 + 3.3005 * x ** 2 - 4.393 * x + 3.0726
+    list_kecepatan_norm = exponweib.pdf(list_kecepatan,
+                                        *exponweib.fit(list_kecepatan, shape_gamma, shape_k, scale=0.05, loc=0.01))
 
     dist_kecepatan = list_kecepatan.tolist()
     dist_kecepatan_norm = list_kecepatan_norm.tolist()
@@ -90,9 +95,9 @@ def json_wtr_angin(request, dt_frm, dt_to, grup, step, kompas='TM'):
         z = arr_grp_v_i_acc.transpose()
 
         samp_rate = 0.2
-        fs = 1/samp_rate   # sampling rate
-        fc1 = 0.1   # First Cutoff Frequency
-        fc2 = 0.4   # Second Cutoff Frequency
+        fs = 1 / samp_rate  # sampling rate
+        fc1 = 0.1  # First Cutoff Frequency
+        fc2 = 0.4  # Second Cutoff Frequency
         # ts = 1.0/fs  # sampling interval
         # t = np.arange(0, 2, ts)  # time vector
 
@@ -106,22 +111,60 @@ def json_wtr_angin(request, dt_frm, dt_to, grup, step, kompas='TM'):
         # frq = k/ti  # two sides frequency range
         # frq = frq[:n/2]  # one side frequency range
 
-        freq = ft.fftfreq(n, 0.2)
-        freq = freq[:n/2]
+        if n > 0:
+            freq = ft.fftfreq(n, 0.2)
+            freq = freq[:n / 2]
 
-        z = butter_bandpass_filter(z, fc1, fc2, fs, order=5)
-        zf = abs(ft.fft(z)/n)  # fft computing and normalization
-        zf = zf[:n/2]
+            z = butter_bandpass_filter(z, fc1, fc2, fs, order=5)
+            zf = abs(ft.fft(z) / n)  # fft computing and normalization
+            zf = zf[:n / 2]
 
-        yf = [i+float(step)]*n
+            yf = [i + float(step)] * n
 
-        nama = str(i)+'-'+str(i + float(step))
-        warna = '#' + str(int(i))+gen_hex_colour_code()
+            nama = str(i) + '-' + str(i + float(step))
+            warna = '#' + str(int(i)) + gen_hex_colour_code()
 
-        obj[str(int(i))] = [nama, warna, freq.tolist(), yf, zf.flatten().tolist()]
+            obj[str(int(i))] = [nama, warna, freq.tolist(), yf, zf.flatten().tolist()]
 
     obj_sorted = sorted(obj.items(), key=operator.itemgetter(0))
     return HttpResponse(json.dumps(dict(obj_sorted)), content_type='application/json')
+
+
+def json_rms_angin(request, vmax=1, step=0.1):
+    for lop in np.arange(0, float(vmax), float(step)):
+        data_acc_1 = DataAngin.objects.filter(grup_kecepatan__gte=lop,
+                                              grup_kecepatan__lt=lop + float(step)).values_list('akselerator1',
+                                                                                                flat=True)
+        np_data_acc_1 = np.array(data_acc_1)
+
+        data_acc_2 = DataAngin.objects.filter(grup_kecepatan__gte=lop,
+                                              grup_kecepatan__lt=lop + float(step)).values_list('akselerator2',
+                                                                                                flat=True)
+        np_data_acc_2 = np.array(data_acc_2)
+
+        data_acc_3 = DataAngin.objects.filter(grup_kecepatan__gte=lop,
+                                              grup_kecepatan__lt=lop + float(step)).values_list('akselerator3',
+                                                                                                flat=True)
+        np_data_acc_3 = np.array(data_acc_3)
+
+        data_acc_4 = DataAngin.objects.filter(grup_kecepatan__gte=lop,
+                                              grup_kecepatan__lt=lop + float(step)).values_list('akselerator4',
+                                                                                                flat=True)
+        np_data_acc_4 = np.array(data_acc_4)
+
+        data_acc_5 = DataAngin.objects.filter(grup_kecepatan__gte=lop,
+                                              grup_kecepatan__lt=lop + float(step)).values_list('akselerator5',
+                                                                                                flat=True)
+        np_data_acc_5 = np.array(data_acc_5)
+
+        np_data_acc = np.concatenate((np_data_acc_1, np_data_acc_2, np_data_acc_3, np_data_acc_4, np_data_acc_5))
+        np_data_acc_square = np.square(np_data_acc)
+        np_data_acc_mean = np.mean(np_data_acc_square)
+        np_data_acc_root = np.sqrt(np_data_acc_mean)
+
+        print(np_data_acc_root)
+
+    return HttpResponse('oke')
 
 
 def index(request):
@@ -150,6 +193,8 @@ def visual(request, pk):
         return render(request, 'monitoring/visual_pdf.html', data)
     elif data_visual.jenis == 'WTR':
         return render(request, 'monitoring/visual_wtr.html', data)
+    elif data_visual.jenis == 'RMS':
+        return render(request, 'monitoring/visual_rms.html', data)
     else:
         messages.warning(request, "Jenis grafik tidak ditemukan.")
         return redirect('halaman_utama')
