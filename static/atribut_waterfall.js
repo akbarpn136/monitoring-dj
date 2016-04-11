@@ -85,7 +85,7 @@ $(document).ready(function(){
                                         });
 
                                         var layout = {
-                                            title: 'GRAFIK Water Fall',
+                                            title: 'GRAFIK Water Fall (x = Grup kecepatan, y = Frekuensi, z = Amplitudo)',
                                             font: {size: 16},
                                             margin: {
                                                 l: 0,
@@ -105,7 +105,8 @@ $(document).ready(function(){
                                         };
 
                                         $("div#loader").removeClass('active');
-                                        Plotly.newPlot(graph1, dt_wtr, layout);
+                                        Plotly.newPlot(graph1, dt_wtr, layout, {showLink: false, displaylogo: false, scrollZoom: true});
+                                        Plotly.redraw(graph1);
                                     });
                                 }
                             });
