@@ -167,8 +167,8 @@ def json_rms_angin(request, vmax=1, step=0.1):
         np_data_acc_root = np.sqrt(np_data_acc_mean)
         nama_grup_kecepatan = str(lop)+' - '+str(lop+float(step))
 
-        x.append(float(np_data_acc_root))
-        y.append(str(nama_grup_kecepatan))
+        y.append(float(np_data_acc_root))
+        x.append(str(nama_grup_kecepatan))
 
     data_rms['data_x'] = x
     data_rms['data_y'] = y

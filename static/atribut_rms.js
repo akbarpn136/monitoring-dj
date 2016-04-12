@@ -14,7 +14,7 @@ $(document).ready(function(){
         else
         {
             $("div#rms").empty();
-            var input_grup = '<input id="grup_v" type="text" placeholder="Jumlah kecepatan">';
+            var input_grup = '<input id="grup_v" type="text" placeholder="Jumlah kelompok kecepatan">';
             $("div#tanggal_akhir").append().html(input_grup);
 
              $("input#grup_v").change(function(){
@@ -23,11 +23,10 @@ $(document).ready(function(){
                  $("div#loader").addClass('active');
 
                  $.get(link_rms+vmax_val+'/'+grup_v_val, function(nilai_rms_json){
-                     console.log(nilai_rms_json);
                      var graph1=document.getElementById("RMS");
                      var trace1 = {
-                         x: [1, 2, 3, 4],
-                         y: [0, 2, 3, 5],
+                         x: nilai_rms_json['data_x'],
+                         y: nilai_rms_json['data_y'],
                          fill: 'tozeroy',
                          type: 'scatter',
                          showlegend: false
