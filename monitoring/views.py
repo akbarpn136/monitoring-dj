@@ -130,42 +130,77 @@ def json_wtr_angin(request, dt_frm, dt_to, grup, step, kompas='TM'):
     return HttpResponse(json.dumps(dict(obj_sorted)), content_type='application/json')
 
 
-def json_rms_angin(request, vmax=1, step=0.1):
+def json_rms_angin(request, vmax=1, step=0.1, kompas='all'):
     data_rms = {}
     x = []
     y = []
 
     for lop in np.arange(0, float(vmax), float(step)):
-        data_acc_1 = DataAngin.objects.filter(grup_kecepatan__gte=lop,
-                                              grup_kecepatan__lt=lop + float(step)).values_list('akselerator1',
-                                                                                                flat=True)
-        np_data_acc_1 = np.array(data_acc_1)
+        if kompas == 'all':
+            data_acc_1 = DataAngin.objects.filter(kecepatan__gte=lop,
+                                                  kecepatan__lt=lop + float(step)).values_list('akselerator1',
+                                                                                                    flat=True)
+        else:
+            data_acc_1 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
+                                                  kompas=kompas).values_list('akselerator1', flat=True)
+        if data_acc_1.count() > 0:
+            np_data_acc_1 = np.array(data_acc_1)
+        else:
+            np_data_acc_1 = np.array((0, 0))
 
-        data_acc_2 = DataAngin.objects.filter(grup_kecepatan__gte=lop,
-                                              grup_kecepatan__lt=lop + float(step)).values_list('akselerator2',
-                                                                                                flat=True)
-        np_data_acc_2 = np.array(data_acc_2)
+        if kompas == 'all':
+            data_acc_2 = DataAngin.objects.filter(kecepatan__gte=lop,
+                                                  kecepatan__lt=lop + float(step)).values_list('akselerator2',
+                                                                                                    flat=True)
+        else:
+            data_acc_2 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
+                                                  kompas=kompas).values_list('akselerator2', flat=True)
+        if data_acc_2.count() > 0:
+            np_data_acc_2 = np.array(data_acc_2)
+        else:
+            np_data_acc_2 = np.array((0, 0))
 
-        data_acc_3 = DataAngin.objects.filter(grup_kecepatan__gte=lop,
-                                              grup_kecepatan__lt=lop + float(step)).values_list('akselerator3',
-                                                                                                flat=True)
-        np_data_acc_3 = np.array(data_acc_3)
+        if kompas == 'all':
+            data_acc_3 = DataAngin.objects.filter(kecepatan__gte=lop,
+                                                  kecepatan__lt=lop + float(step)).values_list('akselerator3',
+                                                                                                    flat=True)
+        else:
+            data_acc_3 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
+                                                  kompas=kompas).values_list('akselerator3', flat=True)
+        if data_acc_3.count() > 0:
+            np_data_acc_3 = np.array(data_acc_3)
+        else:
+            np_data_acc_3 = np.array((0, 0))
 
-        data_acc_4 = DataAngin.objects.filter(grup_kecepatan__gte=lop,
-                                              grup_kecepatan__lt=lop + float(step)).values_list('akselerator4',
-                                                                                                flat=True)
-        np_data_acc_4 = np.array(data_acc_4)
+        if kompas == 'all':
+            data_acc_4 = DataAngin.objects.filter(kecepatan__gte=lop,
+                                                  kecepatan__lt=lop + float(step)).values_list('akselerator4',
+                                                                                                    flat=True)
+        else:
+            data_acc_4 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
+                                                  kompas=kompas).values_list('akselerator4', flat=True)
+        if data_acc_4.count() > 0:
+            np_data_acc_4 = np.array(data_acc_4)
+        else:
+            np_data_acc_4 = np.array((0, 0))
 
-        data_acc_5 = DataAngin.objects.filter(grup_kecepatan__gte=lop,
-                                              grup_kecepatan__lt=lop + float(step)).values_list('akselerator5',
-                                                                                                flat=True)
-        np_data_acc_5 = np.array(data_acc_5)
+        if kompas == 'all':
+            data_acc_5 = DataAngin.objects.filter(kecepatan__gte=lop,
+                                                  kecepatan__lt=lop + float(step)).values_list('akselerator5',
+                                                                                                    flat=True)
+        else:
+            data_acc_5 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
+                                                  kompas=kompas).values_list('akselerator5', flat=True)
+        if data_acc_5.count() > 0:
+            np_data_acc_5 = np.array(data_acc_5)
+        else:
+            np_data_acc_5 = np.array((0, 0))
 
         np_data_acc = np.concatenate((np_data_acc_1, np_data_acc_2, np_data_acc_3, np_data_acc_4, np_data_acc_5))
         np_data_acc_square = np.square(np_data_acc)
         np_data_acc_mean = np.mean(np_data_acc_square)
         np_data_acc_root = np.sqrt(np_data_acc_mean)
-        nama_grup_kecepatan = str(lop)+' - '+str(lop+float(step))
+        nama_grup_kecepatan = str(lop) + ' - ' + str(lop + float(step))
 
         y.append(float(np_data_acc_root))
         x.append(str(nama_grup_kecepatan))
