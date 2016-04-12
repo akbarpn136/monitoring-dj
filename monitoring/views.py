@@ -131,6 +131,10 @@ def json_wtr_angin(request, dt_frm, dt_to, grup, step, kompas='TM'):
 
 
 def json_rms_angin(request, vmax=1, step=0.1):
+    data_rms = {}
+    x = []
+    y = []
+
     for lop in np.arange(0, float(vmax), float(step)):
         data_acc_1 = DataAngin.objects.filter(grup_kecepatan__gte=lop,
                                               grup_kecepatan__lt=lop + float(step)).values_list('akselerator1',
@@ -161,10 +165,15 @@ def json_rms_angin(request, vmax=1, step=0.1):
         np_data_acc_square = np.square(np_data_acc)
         np_data_acc_mean = np.mean(np_data_acc_square)
         np_data_acc_root = np.sqrt(np_data_acc_mean)
+        nama_grup_kecepatan = str(lop)+' - '+str(lop+float(step))
 
-        print(np_data_acc_root)
+        x.append(float(np_data_acc_root))
+        y.append(str(nama_grup_kecepatan))
 
-    return HttpResponse('oke')
+    data_rms['data_x'] = x
+    data_rms['data_y'] = y
+
+    return HttpResponse(json.dumps(data_rms), content_type='application/json')
 
 
 def index(request):
