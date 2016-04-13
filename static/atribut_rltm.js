@@ -251,8 +251,11 @@ $(document).ready(function(){
                         {
                             dt_y = 0;
                         }
+                    });
 
-                        series.addPoint([dt_x, dt_y], true, true);
+                    data.push({
+                        x: dt_x,
+                        y: dt_y
                     });
                 }
                 return data;
