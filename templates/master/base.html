@@ -27,7 +27,7 @@
             </div>
 
             <div class="right menu">
-                <a href="{% url 'halaman_utama' %}" class="{% if '/monitor/' in request.path %}active red{% endif %} mobile hidden item"><i class="home icon"></i>Utama</a>
+                <a href="{% url 'halaman_utama' %}" class="{% if not '/monitor/realtime/' in request.path %}active red{% endif %} mobile hidden item"><i class="home icon"></i>Utama</a>
                 <a href="{% url 'halaman_realtime' %}" id="rlt" class="{% if '/monitor/realtime/' in request.path %}active red{% endif %} mobile hidden item"><i class="signal icon"></i>Real Time</a>
                 <a id="about" class="mobile hidden item"><i class="fork icon"></i>Tentang aplikasi</a>
 
