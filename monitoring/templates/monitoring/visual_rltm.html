@@ -1,5 +1,8 @@
 {% extends 'monitoring/visual.html' %}
 {% load staticfiles %}
+{% block title %}
+    Grafik Real Time|Aplikasi Monitoring BBTA3
+{% endblock %}
 {% block skrip_grafik %}
     <script src="{% static 'highcharts.js' %}"></script>
     <script src="{% static 'atribut_rltm.js' %}"></script>

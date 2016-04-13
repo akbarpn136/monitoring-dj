@@ -18,6 +18,9 @@ urlpatterns = [
         r'(?P<kompas>[\w]+)/',
         views.json_rms_angin, name='json_rms'),
 
+    url(r'^realtime/$', views.realtime, name='halaman_realtime'),
+    url(r'^realtime/(?P<jns>[\w]+)/(?P<ms>[+-]?(\d+(\.\d*)?|\.\d+)([eE][+-]?\d+)?)$', views.get_rltm_dt,
+        name='json_data_realtime'),
     url(r'^$', views.index, name='halaman_utama'),
     url(r'^(?P<pk>[0-9]+)/visual/$', views.visual, name='halaman_visual'),
 ]

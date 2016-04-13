@@ -5,6 +5,7 @@ from django.contrib import messages
 from .models import DaerahObjek, PilihanVisualisasi, DataAngin
 from .tambahan import gen_hex_colour_code, butter_bandpass_filter
 
+import datetime
 import json
 import operator
 import numpy as np
@@ -139,7 +140,7 @@ def json_rms_angin(request, vmax=1, step=0.1, kompas='all'):
         if kompas == 'all':
             data_acc_1 = DataAngin.objects.filter(kecepatan__gte=lop,
                                                   kecepatan__lt=lop + float(step)).values_list('akselerator1',
-                                                                                                    flat=True)
+                                                                                               flat=True)
         else:
             data_acc_1 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
                                                   kompas=kompas).values_list('akselerator1', flat=True)
@@ -151,7 +152,7 @@ def json_rms_angin(request, vmax=1, step=0.1, kompas='all'):
         if kompas == 'all':
             data_acc_2 = DataAngin.objects.filter(kecepatan__gte=lop,
                                                   kecepatan__lt=lop + float(step)).values_list('akselerator2',
-                                                                                                    flat=True)
+                                                                                               flat=True)
         else:
             data_acc_2 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
                                                   kompas=kompas).values_list('akselerator2', flat=True)
@@ -163,7 +164,7 @@ def json_rms_angin(request, vmax=1, step=0.1, kompas='all'):
         if kompas == 'all':
             data_acc_3 = DataAngin.objects.filter(kecepatan__gte=lop,
                                                   kecepatan__lt=lop + float(step)).values_list('akselerator3',
-                                                                                                    flat=True)
+                                                                                               flat=True)
         else:
             data_acc_3 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
                                                   kompas=kompas).values_list('akselerator3', flat=True)
@@ -175,7 +176,7 @@ def json_rms_angin(request, vmax=1, step=0.1, kompas='all'):
         if kompas == 'all':
             data_acc_4 = DataAngin.objects.filter(kecepatan__gte=lop,
                                                   kecepatan__lt=lop + float(step)).values_list('akselerator4',
-                                                                                                    flat=True)
+                                                                                               flat=True)
         else:
             data_acc_4 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
                                                   kompas=kompas).values_list('akselerator4', flat=True)
@@ -187,7 +188,7 @@ def json_rms_angin(request, vmax=1, step=0.1, kompas='all'):
         if kompas == 'all':
             data_acc_5 = DataAngin.objects.filter(kecepatan__gte=lop,
                                                   kecepatan__lt=lop + float(step)).values_list('akselerator5',
-                                                                                                    flat=True)
+                                                                                               flat=True)
         else:
             data_acc_5 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
                                                   kompas=kompas).values_list('akselerator5', flat=True)
@@ -242,3 +243,29 @@ def visual(request, pk):
     else:
         messages.warning(request, "Jenis grafik tidak ditemukan.")
         return redirect('halaman_utama')
+
+
+def realtime(request):
+    data = {}
+
+    return render(request, 'monitoring/visual_rltm.html', data)
+
+
+def get_rltm_dt(request, jns, ms):
+    s = datetime.datetime.fromtimestamp(int(ms) / 1000)
+    tanggal = s.date()
+    waktu = s.strftime('%H:%M:%S')
+
+    if jns == 'kec':
+        data = serializers.serialize('json', DataAngin.objects.filter(tanggal=tanggal, waktu=waktu),
+                                     fields='kecepatan')
+
+    elif jns == 'arh':
+        data = serializers.serialize('json', DataAngin.objects.filter(tanggal=tanggal, waktu=waktu),
+                                     fields='arah')
+
+    else:
+        data = serializers.serialize('json', DataAngin.objects.filter(tanggal=tanggal, waktu=waktu),
+                                     fields='akselerator5')
+
+    return HttpResponse(data, content_type='application/json')
