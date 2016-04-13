@@ -18,7 +18,9 @@
     <div class="gap-besar" style="margin-top: 50px;"></div>
     <div class="ui stacked teal segment">
         <h4 class="ui header">{{ visual.nama }}</h4>
+        {% block deskripsi_visual %}
         <p>{{ visual.deskripsi }}</p>
+        {% endblock %}
         <span id="data_title_x" data-value=""></span>
         <span id="data_title_y" data-value=""></span>
         <span id="data_judul_besar" data-value=""></span>
@@ -52,7 +54,9 @@
         </form>
     </div>
     <div class="gap-kecil"></div>
+    {% block atribut_visual %}
     <div id="{{ visual.jenis }}"></div>
+    {% endblock %}
     <br>
     <div id="loader" class="ui text large inverted loader" style="margin-top: 120px;">MEMUAT DATA</div>
 {% endblock %}
