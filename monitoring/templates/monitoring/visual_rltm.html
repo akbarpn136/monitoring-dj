@@ -1,0 +1,19 @@
+{% extends 'monitoring/visual.html' %}
+{% load staticfiles %}
+{% block skrip_grafik %}
+    <script src="{% static 'highcharts.js' %}"></script>
+    <script src="{% static 'atribut_rltm.js' %}"></script>
+{% endblock %}
+{% block pilihan_visual_form %}
+{% endblock %}
+{% block deskripsi_visual %}
+<p>Grafik monitoring data kecepatan, arah, dan getaran akibat angin secara real time.</p>
+{% endblock %}
+{% block atribut_visual %}
+    <div id="rltm_kec_angin"></div>
+    <br>
+    <div id="rltm_arh_angin"></div>
+    <br>
+    <div id="rltm_gtr_angin"></div>
+    <br>
+{% endblock %}
