@@ -81,7 +81,7 @@ $(document).ready(function(){
                 for (i = -19; i <= 0; i += 1) {
                     data.push({
                         x: time + i * 3000,
-                        y: 0
+                        y: []
                     });
                 }
                 return data;
@@ -161,7 +161,7 @@ $(document).ready(function(){
                 for (i = -19; i <= 0; i += 1) {
                     data.push({
                         x: time + i * 3000,
-                        y: 0
+                        y: []
                     });
                 }
                 return data;
@@ -239,23 +239,11 @@ $(document).ready(function(){
                     i;
 
                 for (i = -19; i <= 0; i += 1) {
-                    var dt_x = time + i * 3000, dt_y;
-
-                    $.get(url+'gtr/'+dt_x, function(val_kec){
-                        if(val_kec.length > 0)
-                        {
-                            dt_y = val_kec[0].fields.akselerator5;
-                        }
-
-                        else
-                        {
-                            dt_y = 0;
-                        }
-                    });
+                    var dt_x = time + i * 3000;
 
                     data.push({
                         x: dt_x,
-                        y: dt_y
+                        y: []
                     });
                 }
                 return data;
