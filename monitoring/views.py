@@ -253,11 +253,11 @@ def realtime(request):
     data_y_gtr = []
 
     for i in range(-20, 0):
-        data_x.append(int((date_time + datetime.timedelta(seconds=i)).timestamp()))
+        data_x.append(int((date_time + datetime.timedelta(seconds=i)).timestamp() * 1000.0))
 
     for j in data_x:
-        tanggal = conv_timestamp(j).date()
-        waktu = conv_timestamp(j).time()
+        tanggal = conv_timestamp(j/1e3).date()
+        waktu = conv_timestamp(j/1e3).time()
         dt_kec = DataAngin.objects.filter(tanggal=tanggal, waktu=waktu).values_list('kecepatan', flat=True)
         dt_arh = DataAngin.objects.filter(tanggal=tanggal, waktu=waktu).values_list('arah', flat=True)
         dt_acc = DataAngin.objects.filter(tanggal=tanggal, waktu=waktu).values_list('akselerator5', flat=True)

@@ -86,12 +86,11 @@ $(document).ready(function(){
                     });
 
                     data.push({
-                        x: dt_x,
-                        y: [dt_y]
+                        x: parseInt(dt_x),
+                        y: (new Date()).getTime()
                     });
                 });
-
-                console.log(dt_x);
+                console.log(data);
                 return data;
             }())
         }]
@@ -172,7 +171,6 @@ $(document).ready(function(){
                         y: []
                     });
                 }
-                console.log(time);
                 return data;
             }())
         }]
