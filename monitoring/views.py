@@ -3,7 +3,7 @@ from django.core import serializers
 from django.contrib import messages
 
 from .models import DaerahObjek, PilihanVisualisasi, DataAngin
-from .tambahan import gen_hex_colour_code, butter_bandpass_filter
+from .tambahan import gen_hex_colour_code, butter_bandpass_filter, conv_timestamp
 
 import datetime
 import json
@@ -246,7 +246,32 @@ def visual(request, pk):
 
 
 def realtime(request):
-    data = {}
+    date_time = datetime.datetime.now()  # millisecond
+    data_x = []
+    data_y_kec = []
+    data_y_arh = []
+    data_y_gtr = []
+
+    for i in range(-20, 0):
+        data_x.append(int((date_time + datetime.timedelta(seconds=i)).timestamp()))
+
+    for j in data_x:
+        tanggal = conv_timestamp(j).date()
+        waktu = conv_timestamp(j).time()
+        dt_kec = DataAngin.objects.filter(tanggal=tanggal, waktu=waktu).values_list('kecepatan', flat=True)
+        dt_arh = DataAngin.objects.filter(tanggal=tanggal, waktu=waktu).values_list('arah', flat=True)
+        dt_acc = DataAngin.objects.filter(tanggal=tanggal, waktu=waktu).values_list('akselerator5', flat=True)
+
+        data_y_kec.append(dt_kec)
+        data_y_arh.append(dt_arh)
+        data_y_gtr.append(dt_acc)
+
+    data = {
+        'data_x': data_x,
+        'data_y_kec': data_y_kec,
+        'data_y_arh': data_y_arh,
+        'data_y_gtr': data_y_gtr,
+    }
 
     return render(request, 'monitoring/visual_rltm.html', data)
 
