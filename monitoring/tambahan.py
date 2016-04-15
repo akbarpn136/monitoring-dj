@@ -1,3 +1,4 @@
+import datetime
 import random
 from scipy.signal import butter, lfilter, filtfilt
 
@@ -22,3 +23,9 @@ def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
     y = lfilter(b, a, data)
     # y = filtfilt(b, a, data)
     return y
+
+
+def conv_timestamp(tm):
+    t = datetime.datetime.fromtimestamp(tm)
+
+    return t
