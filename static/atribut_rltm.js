@@ -23,7 +23,6 @@ $(document).ready(function(){
                         var x = (new Date()).getTime(), y;
 
                         $.get(url+'kec/'+x, function(val_kec){
-                            console.log(val_kec);
                             if(val_kec.length > 0)
                             {
                                 y = val_kec[0].fields.kecepatan;
@@ -74,16 +73,25 @@ $(document).ready(function(){
             name: 'Data Kecepatan Angin',
             data: (function () {
                 // generate an array of random data
-                var data = [],
-                    time = (new Date()).getTime(),
-                    i;
+                var data = [];
+                var dt_x_selector = $("div#wkt span");
+                var dt_y_selector = $("div#kec span");
+                var dt_x = 0;
+                var dt_y = 0;
 
-                for (i = -19; i <= 0; i += 1) {
-                    data.push({
-                        x: time + i * 3000,
-                        y: []
+                dt_x_selector.each(function(){
+                    dt_x = $(this).text();
+                    dt_y_selector.each(function(){
+                        dt_y = $(this).text();
                     });
-                }
+
+                    data.push({
+                        x: dt_x,
+                        y: [dt_y]
+                    });
+                });
+
+                console.log(dt_x);
                 return data;
             }())
         }]
@@ -164,6 +172,7 @@ $(document).ready(function(){
                         y: []
                     });
                 }
+                console.log(time);
                 return data;
             }())
         }]

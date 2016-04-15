@@ -262,6 +262,13 @@ def realtime(request):
         dt_arh = DataAngin.objects.filter(tanggal=tanggal, waktu=waktu).values_list('arah', flat=True)
         dt_acc = DataAngin.objects.filter(tanggal=tanggal, waktu=waktu).values_list('akselerator5', flat=True)
 
+        if dt_kec.count() == 0:
+            dt_kec = 0
+        if dt_arh.count() == 0:
+            dt_arh = 0
+        if dt_acc.count() == 0:
+            dt_acc = 0
+
         data_y_kec.append(dt_kec)
         data_y_arh.append(dt_arh)
         data_y_gtr.append(dt_acc)

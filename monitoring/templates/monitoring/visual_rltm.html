@@ -11,9 +11,27 @@
 {% endblock %}
 {% block deskripsi_visual %}
 <p>Grafik monitoring data kecepatan, arah, dan getaran akibat angin secara real time.</p>
-    <div id="kec">
+    <div id="wkt">
     {% for x in data_x %}
         <span style="position: absolute; top: -9999px;">{{ x }}</span>
+    {% endfor %}
+    </div>
+
+    <div id="kec">
+    {% for y_kec in data_y_kec %}
+        <span style="position: absolute; top: -9999px;">{{ y_kec }}</span>
+    {% endfor %}
+    </div>
+
+    <div id="arh">
+    {% for y_arh in data_y_arh %}
+        <span style="position: absolute; top: -9999px;">{{ y_arh }}</span>
+    {% endfor %}
+    </div>
+
+    <div id="gtr">
+    {% for y_gtr in data_y_gtr %}
+        <span style="position: absolute; top: -9999px;">{{ y_gtr }}</span>
     {% endfor %}
     </div>
 {% endblock %}
