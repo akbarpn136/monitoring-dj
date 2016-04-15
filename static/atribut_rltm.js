@@ -72,7 +72,6 @@ $(document).ready(function(){
         series: [{
             name: 'Data Kecepatan Angin',
             data: (function () {
-                // generate an array of random data
                 var data = [];
                 var dt_x_selector = $("div#wkt span");
                 var dt_y_selector = $("div#kec span");
@@ -87,10 +86,9 @@ $(document).ready(function(){
 
                     data.push({
                         x: parseInt(dt_x),
-                        y: (new Date()).getTime()
+                        y: parseInt(dt_y)
                     });
                 });
-                console.log(data);
                 return data;
             }())
         }]
@@ -160,17 +158,23 @@ $(document).ready(function(){
         series: [{
             name: 'Data Arah Angin',
             data: (function () {
-                // generate an array of random data
-                var data = [],
-                    time = (new Date()).getTime(),
-                    i;
+                var data = [];
+                var dt_x_selector = $("div#wkt span");
+                var dt_y_selector = $("div#arh span");
+                var dt_x = 0;
+                var dt_y = 0;
 
-                for (i = -19; i <= 0; i += 1) {
-                    data.push({
-                        x: time + i * 3000,
-                        y: []
+                dt_x_selector.each(function(){
+                    dt_x = $(this).text();
+                    dt_y_selector.each(function(){
+                        dt_y = $(this).text();
                     });
-                }
+
+                    data.push({
+                        x: parseInt(dt_x),
+                        y: parseInt(dt_y)
+                    });
+                });
                 return data;
             }())
         }]
@@ -240,19 +244,23 @@ $(document).ready(function(){
         series: [{
             name: 'Data Getaran Akibat Angin',
             data: (function () {
-                // generate an array of random data
-                var data = [],
-                    time = (new Date()).getTime(),
-                    i;
+                var data = [];
+                var dt_x_selector = $("div#wkt span");
+                var dt_y_selector = $("div#gtr span");
+                var dt_x = 0;
+                var dt_y = 0;
 
-                for (i = -19; i <= 0; i += 1) {
-                    var dt_x = time + i * 3000;
+                dt_x_selector.each(function(){
+                    dt_x = $(this).text();
+                    dt_y_selector.each(function(){
+                        dt_y = $(this).text();
+                    });
 
                     data.push({
-                        x: dt_x,
-                        y: []
+                        x: parseInt(dt_x),
+                        y: parseInt(dt_y)
                     });
-                }
+                });
                 return data;
             }())
         }]

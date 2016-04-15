@@ -253,7 +253,7 @@ def realtime(request):
     data_y_gtr = []
 
     for i in range(-20, 0):
-        data_x.append(int((date_time + datetime.timedelta(seconds=i)).timestamp() * 1000.0))
+        data_x.append(int((date_time + datetime.timedelta(seconds=i*3)).timestamp() * 1e3))
 
     for j in data_x:
         tanggal = conv_timestamp(j/1e3).date()
