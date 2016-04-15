@@ -11,6 +11,11 @@
 {% endblock %}
 {% block deskripsi_visual %}
 <p>Grafik monitoring data kecepatan, arah, dan getaran akibat angin secara real time.</p>
+    <div id="kec">
+    {% for x in data_x %}
+        <span style="position: absolute; top: -9999px;">{{ x }}</span>
+    {% endfor %}
+    </div>
 {% endblock %}
 {% block atribut_visual %}
     <div id="rltm_kec_angin"></div>
