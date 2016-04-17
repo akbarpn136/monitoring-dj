@@ -65,7 +65,7 @@ def json_pdf_angin(request, dt_frm, dt_to):
     x = 1 + (1 / shape_k)  # refeerence http://www.wind-power-program.com/wind_statistics.htm#top
     shape_gamma = 0.1693 * x ** 4 - 1.1495 * x ** 3 + 3.3005 * x ** 2 - 4.393 * x + 3.0726
     list_kecepatan_norm = exponweib.pdf(list_kecepatan,
-                                        *exponweib.fit(list_kecepatan, shape_gamma, shape_k, scale=0.05, loc=0.01))
+                                        *exponweib.fit(list_kecepatan, shape_gamma, shape_k, scale=0.0, loc=0.0))
 
     dist_kecepatan = list_kecepatan.tolist()
     dist_kecepatan_norm = list_kecepatan_norm.tolist()
