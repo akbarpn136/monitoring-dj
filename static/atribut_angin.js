@@ -119,7 +119,7 @@ $(document).ready(function(){
 
                                 $("div#loader").addClass('active');
 
-                                $.get('/monitor/'+ daerah_tertentu2 + '/atribut/' + $("span#data_tgl_awl").attr("data-value") + '/' + $("span#data_tgl_akr").attr("data-value"), function(data){
+                                $.get('/monitor/' + 'atribut/' + $("span#data_tgl_awl").attr("data-value") + '/' + $("span#data_tgl_akr").attr("data-value"), function(data){
                                     $.each(data, function(a, b){
                                         key_x2.push(b.fields.tanggal+' '+b.fields.waktu);
                                         key_y2.push(b.fields.arah);
@@ -168,7 +168,7 @@ $(document).ready(function(){
 
                                 $("div#loader").addClass('active');
 
-                                $.get('/monitor/'+ daerah_tertentu3 + '/atribut/' + $("span#data_tgl_awl").attr("data-value") + '/' + $("span#data_tgl_akr").attr("data-value"), function(data){
+                                $.get('/monitor/' + 'atribut/' + $("span#data_tgl_awl").attr("data-value") + '/' + $("span#data_tgl_akr").attr("data-value"), function(data){
                                     $.each(data, function(a, b){
                                         key_x3.push(b.fields.tanggal+' '+b.fields.waktu);
                                         key_y3.push(b.fields.akselerator5);
