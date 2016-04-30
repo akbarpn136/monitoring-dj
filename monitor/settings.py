@@ -145,3 +145,12 @@ STATICFILES_DIRS = [
 # Static for deployment
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
+# Celery Configuration
+BROKER_URL = 'amqp://localhost:5672/'
+CELERY_RESULT_BACKEND = 'rpc://'
+CELERY_RESULT_PERSISTENT = True
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE,
+CELERY_ENABLE_UTC = True,
