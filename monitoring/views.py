@@ -1,27 +1,23 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
-from django.core import serializers
-from django.http import JsonResponse
 from django.contrib import messages
 
 from .models import DaerahObjek, PilihanVisualisasi, DataAngin
-from .tambahan import gen_hex_colour_code, butter_bandpass_filter, conv_timestamp
-from .tasks import do_windrose
+from .tambahan import conv_timestamp
+from .tasks import do_windrose, do_pdf, do_wtr, do_angin, do_rms
 
 import datetime
 import json
 import operator
-import numpy as np
-import scipy.fftpack as ft
-from scipy.stats import exponweib
 
 data_daerah = DaerahObjek.objects.all()
 
 
 # Create your views here.
 def json_atr_angin(request, dt_frm, dt_to):
-    temp_output = serializers.serialize('json', DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to),
-                                        fields=('tanggal', 'waktu', 'arah', 'kecepatan', 'akselerator5'))
-    return HttpResponse(temp_output, content_type='application/json')
+    task_result = do_angin.delay(dt_frm, dt_to)
+    obj = task_result.get()
+
+    return HttpResponse(obj, content_type='application/json')
 
 
 def json_rose_angin(request, dt_frm, dt_to, vmax, step):
@@ -32,158 +28,25 @@ def json_rose_angin(request, dt_frm, dt_to, vmax, step):
 
 
 def json_pdf_angin(request, dt_frm, dt_to):
-    grp_v = DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).order_by('kecepatan')
+    task_result = do_pdf.delay(dt_frm, dt_to)
 
-    list_kecepatan = np.array([o.grup_kecepatan for o in grp_v])
-    # mean = np.mean(list_kecepatan)
-    stddev = np.std(list_kecepatan, ddof=1)
-    shape_k = (0.9874 / stddev) ** 1.0983
-    x = 1 + (1 / shape_k)  # refeerence http://www.wind-power-program.com/wind_statistics.htm#top
-    shape_gamma = 0.1693 * x ** 4 - 1.1495 * x ** 3 + 3.3005 * x ** 2 - 4.393 * x + 3.0726
-    list_kecepatan_norm = exponweib.pdf(list_kecepatan,
-                                        *exponweib.fit(list_kecepatan, shape_gamma, shape_k, scale=0.0, loc=0.0))
-
-    dist_kecepatan = list_kecepatan.tolist()
-    dist_kecepatan_norm = list_kecepatan_norm.tolist()
-
-    obj = [{
-        'velo': dist_kecepatan,
-        'veloy': dist_kecepatan_norm,
-    }]
+    obj = task_result.get()
 
     return HttpResponse(json.dumps(obj), content_type='application/json')
 
 
 def json_wtr_angin(request, dt_frm, dt_to, grup, step, kompas='TM'):
-    grp_v = DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to)
+    task_result = do_wtr.delay(dt_frm, dt_to, grup, step, kompas)
 
-    obj = {}
-
-    for i in np.arange(0, float(grup), float(step)):
-        grp_v_i = grp_v.filter(kecepatan__gte=i, kecepatan__lt=i + float(step)).filter(kompas=kompas)
-
-        grp_v_i_acc1 = grp_v_i.values_list('akselerator1', flat=True)
-        grp_v_i_acc2 = grp_v_i.values_list('akselerator2', flat=True)
-        grp_v_i_acc3 = grp_v_i.values_list('akselerator3', flat=True)
-        grp_v_i_acc4 = grp_v_i.values_list('akselerator4', flat=True)
-        grp_v_i_acc5 = grp_v_i.values_list('akselerator5', flat=True)
-
-        arr_grp_v_i_acc = np.matrix([grp_v_i_acc1, grp_v_i_acc2, grp_v_i_acc3, grp_v_i_acc4, grp_v_i_acc5])
-        z = arr_grp_v_i_acc.transpose()
-
-        samp_rate = 0.2
-        fs = 1 / samp_rate  # sampling rate
-        fc1 = 0.1  # First Cutoff Frequency
-        fc2 = 0.4  # Second Cutoff Frequency
-        # ts = 1.0/fs  # sampling interval
-        # t = np.arange(0, 2, ts)  # time vector
-
-        # ff = 5   # frequency of the signal
-        # y = np.sin(2*np.pi*ff*t)
-
-        # n = len(y)  # length of the signal
-        n = z.size  # length of the signal
-        # k = np.arange(n)
-        # ti = n/fs
-        # frq = k/ti  # two sides frequency range
-        # frq = frq[:n/2]  # one side frequency range
-
-        if n > 0:
-            freq = ft.fftfreq(n, 0.2)
-            freq = freq[:n / 2]
-
-            z = butter_bandpass_filter(z, fc1, fc2, fs, order=5)
-            zf = abs(ft.fft(z) / n)  # fft computing and normalization
-            zf = zf[:n / 2]
-
-            yf = [i + float(step)] * n
-
-            nama = str(i) + '-' + str(i + float(step))
-            warna = '#' + str(int(i)) + gen_hex_colour_code()
-
-            obj[str(int(i))] = [nama, warna, freq.tolist(), yf, zf.flatten().tolist()]
+    obj = task_result.get()
 
     obj_sorted = sorted(obj.items(), key=operator.itemgetter(0))
     return HttpResponse(json.dumps(dict(obj_sorted)), content_type='application/json')
 
 
 def json_rms_angin(request, vmax=1, step=0.1, kompas='all'):
-    data_rms = {}
-    x = []
-    y = []
-
-    for lop in np.arange(0, float(vmax), float(step)):
-        if kompas == 'all':
-            data_acc_1 = DataAngin.objects.filter(kecepatan__gte=lop,
-                                                  kecepatan__lt=lop + float(step)).values_list('akselerator1',
-                                                                                               flat=True)
-        else:
-            data_acc_1 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
-                                                  kompas=kompas).values_list('akselerator1', flat=True)
-        if data_acc_1.count() > 0:
-            np_data_acc_1 = np.array(data_acc_1)
-        else:
-            np_data_acc_1 = np.array((0, 0))
-
-        if kompas == 'all':
-            data_acc_2 = DataAngin.objects.filter(kecepatan__gte=lop,
-                                                  kecepatan__lt=lop + float(step)).values_list('akselerator2',
-                                                                                               flat=True)
-        else:
-            data_acc_2 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
-                                                  kompas=kompas).values_list('akselerator2', flat=True)
-        if data_acc_2.count() > 0:
-            np_data_acc_2 = np.array(data_acc_2)
-        else:
-            np_data_acc_2 = np.array((0, 0))
-
-        if kompas == 'all':
-            data_acc_3 = DataAngin.objects.filter(kecepatan__gte=lop,
-                                                  kecepatan__lt=lop + float(step)).values_list('akselerator3',
-                                                                                               flat=True)
-        else:
-            data_acc_3 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
-                                                  kompas=kompas).values_list('akselerator3', flat=True)
-        if data_acc_3.count() > 0:
-            np_data_acc_3 = np.array(data_acc_3)
-        else:
-            np_data_acc_3 = np.array((0, 0))
-
-        if kompas == 'all':
-            data_acc_4 = DataAngin.objects.filter(kecepatan__gte=lop,
-                                                  kecepatan__lt=lop + float(step)).values_list('akselerator4',
-                                                                                               flat=True)
-        else:
-            data_acc_4 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
-                                                  kompas=kompas).values_list('akselerator4', flat=True)
-        if data_acc_4.count() > 0:
-            np_data_acc_4 = np.array(data_acc_4)
-        else:
-            np_data_acc_4 = np.array((0, 0))
-
-        if kompas == 'all':
-            data_acc_5 = DataAngin.objects.filter(kecepatan__gte=lop,
-                                                  kecepatan__lt=lop + float(step)).values_list('akselerator5',
-                                                                                               flat=True)
-        else:
-            data_acc_5 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
-                                                  kompas=kompas).values_list('akselerator5', flat=True)
-        if data_acc_5.count() > 0:
-            np_data_acc_5 = np.array(data_acc_5)
-        else:
-            np_data_acc_5 = np.array((0, 0))
-
-        np_data_acc = np.concatenate((np_data_acc_1, np_data_acc_2, np_data_acc_3, np_data_acc_4, np_data_acc_5))
-        np_data_acc_square = np.square(np_data_acc)
-        np_data_acc_mean = np.mean(np_data_acc_square)
-        np_data_acc_root = np.sqrt(np_data_acc_mean)
-        nama_grup_kecepatan = str(lop) + ' - ' + str(lop + float(step))
-
-        y.append(float(np_data_acc_root))
-        x.append(str(nama_grup_kecepatan))
-
-    data_rms['data_x'] = x
-    data_rms['data_y'] = y
+    task_result = do_rms.delay(vmax, step, kompas)
+    data_rms = task_result.get()
 
     return HttpResponse(json.dumps(data_rms), content_type='application/json')
 
