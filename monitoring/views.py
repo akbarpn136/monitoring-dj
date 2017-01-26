@@ -3,9 +3,10 @@ from django.contrib import messages
 from django.core import serializers
 
 from .models import DaerahObjek, PilihanVisualisasi, DataAngin
-from .tambahan import conv_timestamp
+from .tambahan import conv_timestamp, gen_hex_colour_code
 from .tasks import do_windrose, do_pdf, do_wtr, do_angin, do_rms
 
+import numpy as np
 import datetime
 import json
 import operator
@@ -22,7 +23,7 @@ def json_atr_angin(request, dt_frm, dt_to):
 
 
 def json_rose_angin(request, dt_frm, dt_to, vmax, step):
-    task_result = do_windrose.delay(dt_frm, dt_to, vmax, step)
+    # task_result = do_windrose.delay(dt_frm, dt_to, vmax, step)
 
     grp_v_tot = DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).count()
 
