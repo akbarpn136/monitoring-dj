@@ -54,9 +54,9 @@ def json_rose_angin(request, dt_frm, dt_to, vmax, step):
         k = {}
         
     # k_sorted = sorted(task_result.get().items(), key=operator.itemgetter(0))
-    k_sorted = sorted(k, key=operator.itemgetter(0))
+    # k_sorted = sorted(k, key=operator.itemgetter(0))
     
-    return HttpResponse(json.dumps(dict(k_sorted)), content_type='application/json')
+    return HttpResponse(json.dumps(k, sort_keys=True), content_type='application/json')
 
 
 def json_pdf_angin(request, dt_frm, dt_to):
