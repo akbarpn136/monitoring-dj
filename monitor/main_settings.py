@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework.authtoken',
     'monitoring',
+    'monitoring_rest.apps.MonitoringRestConfig',
 ]
 
 MIDDLEWARE_CLASSES = [

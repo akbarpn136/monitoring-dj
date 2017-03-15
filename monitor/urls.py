@@ -20,4 +20,6 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^monitor/', include('monitoring.urls')),
+    url(r'^v1/', include('rest_framework.urls', namespace='api_admin')),
+    url(r'^v1/monitor/', include('monitoring_rest.urls', namespace='api_monitor')),
 ]

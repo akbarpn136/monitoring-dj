@@ -26,6 +26,9 @@ class DataAngin(models.Model):
     daerah = models.ForeignKey(DaerahObjek, verbose_name='Daerah', null=True, blank=True, on_delete=models.SET_NULL,
                                default=1)
 
+    class Meta:
+        ordering = ('tanggal',)
+
     def __str__(self):
         return 'Grup kecepatan: ' + str(self.grup_kecepatan)
 
