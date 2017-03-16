@@ -1,0 +1,35 @@
+<nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+            aria-controls="navbarSupportedContent" aria-expanded="false"
+            aria-label="Toggle navigation" anMunculitu (status)="onStatusClicked($event)">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a class="navbar-brand" [routerLink]="['']"
+                   routerLinkActive="active"
+                   [routerLinkActiveOptions]="{exact: true}">Monitoring</a>
+
+    <div class="collapse navbar-collapse" anMunculitu [isVisible]="status">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['angin']"
+                   routerLinkActive="active">Angin</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['windrose']"
+                   routerLinkActive="active">Wind Rose</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['pdf']"
+                   routerLinkActive="active">PDF</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['waterfall']"
+                   routerLinkActive="active">Waterfall</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [routerLink]="['rms']"
+                   routerLinkActive="active">RMS</a>
+            </li>
+        </ul>
+    </div>
+</nav>
