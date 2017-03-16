@@ -27,7 +27,7 @@ class DataAngin(models.Model):
                                default=1)
 
     class Meta:
-        ordering = ('tanggal',)
+        ordering = ('tanggal', 'waktu')
 
     def __str__(self):
         return 'Grup kecepatan: ' + str(self.grup_kecepatan)
