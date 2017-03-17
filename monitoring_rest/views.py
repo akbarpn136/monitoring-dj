@@ -64,7 +64,7 @@ class MonitorWindrose(ListView):
                        (self.get_queryset().filter(kompas__contains='BL', grup_kecepatan__gte=v,
                                                    grup_kecepatan__lt=v + step).count() / total) * 100
                    ],
-                   'nama': str(v) + '-' + str(v + step) + 'm/s',
+                   'nama': str(v)[0:3] + ' - ' + str(v + step)[0:3] + ' m/s',
                    'kompas': ['Utara', 'Timur Laut', 'Timur', 'Tenggara', 'Selatan', 'Barat Daya', 'Barat',
                               'Barat Laut'],
                } for i, v in enumerate(v_range)]
