@@ -34,4 +34,27 @@ export class ProsesService {
                 }
             );
     }
+
+    ambilWindroseAngin(date_from, date_to) {
+        let header = new Headers({'Content-Type': 'Application/json'});
+        let options = new RequestOptions({headers: header});
+
+        return this.http.get(`${this.URL_ANGIN}${date_from}/${date_to}/`, options)
+            .map(
+                (res: Response) => {
+                    return res.json();
+                }
+            )
+            .catch(
+                (err: Response | any) => {
+                    if (err instanceof Response) {
+                        return Observable.throw(err.json());
+                    }
+
+                    else {
+                        return err.message;
+                    }
+                }
+            );
+    }
 }
