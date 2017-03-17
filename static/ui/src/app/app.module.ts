@@ -9,8 +9,9 @@ import {AppComponent} from './app.component';
 import {HeaderComponent} from './header/header.component';
 import {MunculiniDirective} from "./directives/munculini.directive";
 import {MunculituDirective} from "./directives/munculitu.directive";
-import { AnginComponent } from './angin/angin.component';
-import { SpinnerComponent } from './spinner/spinner.component';
+import {AnginComponent} from './angin/angin.component';
+import {SpinnerComponent} from './spinner/spinner.component';
+import {WindroseComponent} from './windrose/windrose.component';
 
 @NgModule({
     declarations: [
@@ -19,7 +20,8 @@ import { SpinnerComponent } from './spinner/spinner.component';
         MunculituDirective,
         HeaderComponent,
         AnginComponent,
-        SpinnerComponent
+        SpinnerComponent,
+        WindroseComponent
     ],
     imports: [
         BrowserModule,
