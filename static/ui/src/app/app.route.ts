@@ -4,9 +4,10 @@
 import {Route, RouterModule} from '@angular/router';
 import {AnginComponent} from "./angin/angin.component";
 import {WindroseComponent} from "./windrose/windrose.component";
+import {RmsComponent} from "./rms/rms.component";
 
 const APP_ROUTES: Route[] = [
-    {path: 'rms', component: AnginComponent},
+    {path: 'rms', component: RmsComponent},
     {path: 'waterfall', component: AnginComponent},
     {path: 'pdf', component: AnginComponent},
     {path: 'windrose', component: WindroseComponent},

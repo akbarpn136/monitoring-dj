@@ -12,6 +12,7 @@ import {MunculituDirective} from "./directives/munculitu.directive";
 import {AnginComponent} from './angin/angin.component';
 import {SpinnerComponent} from './spinner/spinner.component';
 import {WindroseComponent} from './windrose/windrose.component';
+import { RmsComponent } from './rms/rms.component';
 
 @NgModule({
     declarations: [
@@ -21,7 +22,8 @@ import {WindroseComponent} from './windrose/windrose.component';
         HeaderComponent,
         AnginComponent,
         SpinnerComponent,
-        WindroseComponent
+        WindroseComponent,
+        RmsComponent
     ],
     imports: [
         BrowserModule,

@@ -1,0 +1,49 @@
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <h1 class="display-3">{{title}}</h1>
+        <p class="lead">
+            {{deskripsi}}
+        </p>
+        <hr class="mt-2 mb-3">
+
+        <form [formGroup]="rmsForm" (submit)="onFormRMSSubmit(rmsForm.value)">
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label for="arah">Arah</label>
+                    <select name="arah" id="arah" class="form-control"
+                            formControlName="arah">
+                        <option value="all">Semua arah angin</option>
+                        <option value="UT">Utara</option>
+                        <option value="TL">Timur Laut</option>
+                        <option value="TM">Timur</option>
+                        <option value="TG">Tenggara</option>
+                        <option value="SL">Selatan</option>
+                        <option value="BD">Barat Daya</option>
+                        <option value="BR">Barat</option>
+                        <option value="BL">Barat Laut</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="vmax">Kecepatan</label>
+                    <input type="number" step="any" class="form-control" id="vmax" aria-describedby="vmax"
+                           placeholder="Kecepatan maksimum"
+                           name="v_max"
+                           formControlName="v_max">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="step">Rentang</label>
+                    <input type="number" step="any" class="form-control" id="step" aria-describedby="step"
+                           placeholder="Rentang kecepatan"
+                           name="v_step"
+                           formControlName="v_step">
+                    <small>Misal: setiap 0.1, 0.2 m/s</small>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" [disabled]="!rmsForm.valid">PROSES</button>
+            <ui-spinner [isShow]="isShow"></ui-spinner>
+        </form>
+    </div>
+</div>
+<div class="container-fluid">
+    <div id="plotRMS"></div>
+</div>
