@@ -30,14 +30,14 @@ def do_windrose(dt_frm, dt_to, vmax, step):
             grp_v_i = DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to) \
                 .filter(grup_kecepatan__gte=lop, grup_kecepatan__lt=lop + float(step))
 
-            grp_v_i_ut = (grp_v_i.filter(kompas='UT').count() / grp_v_tot) * 100
-            grp_v_i_tl = (grp_v_i.filter(kompas='TL').count() / grp_v_tot) * 100
-            grp_v_i_tm = (grp_v_i.filter(kompas='TM').count() / grp_v_tot) * 100
-            grp_v_i_tg = (grp_v_i.filter(kompas='TG').count() / grp_v_tot) * 100
-            grp_v_i_sl = (grp_v_i.filter(kompas='SL').count() / grp_v_tot) * 100
-            grp_v_i_bd = (grp_v_i.filter(kompas='BD').count() / grp_v_tot) * 100
-            grp_v_i_br = (grp_v_i.filter(kompas='BR').count() / grp_v_tot) * 100
-            grp_v_i_bl = (grp_v_i.filter(kompas='BL').count() / grp_v_tot) * 100
+            grp_v_i_ut = (grp_v_i.filter(kompas__contains='UT').count() / grp_v_tot) * 100
+            grp_v_i_tl = (grp_v_i.filter(kompas__contains='TL').count() / grp_v_tot) * 100
+            grp_v_i_tm = (grp_v_i.filter(kompas__contains='TM').count() / grp_v_tot) * 100
+            grp_v_i_tg = (grp_v_i.filter(kompas__contains='TG').count() / grp_v_tot) * 100
+            grp_v_i_sl = (grp_v_i.filter(kompas__contains='SL').count() / grp_v_tot) * 100
+            grp_v_i_bd = (grp_v_i.filter(kompas__contains='BD').count() / grp_v_tot) * 100
+            grp_v_i_br = (grp_v_i.filter(kompas__contains='BR').count() / grp_v_tot) * 100
+            grp_v_i_bl = (grp_v_i.filter(kompas__contains='BL').count() / grp_v_tot) * 100
 
             list_grp_v_i = [grp_v_i_ut, grp_v_i_tl, grp_v_i_tm, grp_v_i_tg, grp_v_i_sl, grp_v_i_bd,
                             grp_v_i_br, grp_v_i_bl, str(lop) + '-' + str(lop + float(step)) + ' m/s', str(count) +
@@ -142,7 +142,7 @@ def do_rms(vmax=1, step=0.1, kompas='all'):
                                                                                                flat=True)
         else:
             data_acc_1 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
-                                                  kompas=kompas).values_list('akselerator1', flat=True)
+                                                  kompas__contains=kompas).values_list('akselerator1', flat=True)
         if data_acc_1.count() > 0:
             np_data_acc_1 = np.array(data_acc_1)
         else:
@@ -154,7 +154,7 @@ def do_rms(vmax=1, step=0.1, kompas='all'):
                                                                                                flat=True)
         else:
             data_acc_2 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
-                                                  kompas=kompas).values_list('akselerator2', flat=True)
+                                                  kompas__contains=kompas).values_list('akselerator2', flat=True)
         if data_acc_2.count() > 0:
             np_data_acc_2 = np.array(data_acc_2)
         else:
@@ -166,7 +166,7 @@ def do_rms(vmax=1, step=0.1, kompas='all'):
                                                                                                flat=True)
         else:
             data_acc_3 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
-                                                  kompas=kompas).values_list('akselerator3', flat=True)
+                                                  kompas__contains=kompas).values_list('akselerator3', flat=True)
         if data_acc_3.count() > 0:
             np_data_acc_3 = np.array(data_acc_3)
         else:
@@ -178,7 +178,7 @@ def do_rms(vmax=1, step=0.1, kompas='all'):
                                                                                                flat=True)
         else:
             data_acc_4 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
-                                                  kompas=kompas).values_list('akselerator4', flat=True)
+                                                  kompas__contains=kompas).values_list('akselerator4', flat=True)
         if data_acc_4.count() > 0:
             np_data_acc_4 = np.array(data_acc_4)
         else:
@@ -190,7 +190,7 @@ def do_rms(vmax=1, step=0.1, kompas='all'):
                                                                                                flat=True)
         else:
             data_acc_5 = DataAngin.objects.filter(kecepatan__gte=lop, kecepatan__lt=lop + float(step),
-                                                  kompas=kompas).values_list('akselerator5', flat=True)
+                                                  kompas__contains=kompas).values_list('akselerator5', flat=True)
         if data_acc_5.count() > 0:
             np_data_acc_5 = np.array(data_acc_5)
         else:
