@@ -9,6 +9,7 @@ import {Observable} from "rxjs";
 export class ProsesService {
     private URL_ANGIN = 'http://localhost:8000/v1/monitor/angin/';
     private URL_WINDROSE = 'http://localhost:8000/v1/monitor/windrose/';
+    private URL_RMS = 'http://localhost:8000/v1/monitor/rms/';
 
     constructor(private http: Http) {
     }
@@ -45,6 +46,34 @@ export class ProsesService {
         let options = new RequestOptions({headers: header, search: parameter});
 
         return this.http.get(`${this.URL_WINDROSE}${date_from}/${date_to}/`, options)
+            .map(
+                (res: Response) => {
+                    return res.json();
+                }
+            )
+            .catch(
+                (err: Response | any) => {
+                    if (err instanceof Response) {
+                        return Observable.throw(err.json());
+                    }
+
+                    else {
+                        return err.message;
+                    }
+                }
+            );
+    }
+
+    ambilRMSAngin(vmax, step, arah) {
+        let header = new Headers({'Content-Type': 'application/json'});
+        let parameter = new URLSearchParams();
+        parameter.set('vmax', vmax);
+        parameter.set('step', step);
+        parameter.set('arah', arah);
+
+        let options = new RequestOptions({headers: header, search: parameter});
+
+        return this.http.get(`${this.URL_RMS}`, options)
             .map(
                 (res: Response) => {
                     return res.json();
