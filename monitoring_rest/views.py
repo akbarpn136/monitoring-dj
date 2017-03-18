@@ -44,29 +44,32 @@ class MonitorWindrose(ListView):
         v_range = numpy.arange(0.0, vmax + step, step).tolist()
         total = self.get_queryset().count()
 
-        obj = [{
-                   'id': i,
-                   'persentase': [
-                       (self.get_queryset().filter(kompas__contains='UT', grup_kecepatan__gte=v,
-                                                   grup_kecepatan__lt=v + step).count() / total) * 100,
-                       (self.get_queryset().filter(kompas__contains='TL', grup_kecepatan__gte=v,
-                                                   grup_kecepatan__lt=v + step).count() / total) * 100,
-                       (self.get_queryset().filter(kompas__contains='TM', grup_kecepatan__gte=v,
-                                                   grup_kecepatan__lt=v + step).count() / total) * 100,
-                       (self.get_queryset().filter(kompas__contains='TG', grup_kecepatan__gte=v,
-                                                   grup_kecepatan__lt=v + step).count() / total) * 100,
-                       (self.get_queryset().filter(kompas__contains='SL', grup_kecepatan__gte=v,
-                                                   grup_kecepatan__lt=v + step).count() / total) * 100,
-                       (self.get_queryset().filter(kompas__contains='BD', grup_kecepatan__gte=v,
-                                                   grup_kecepatan__lt=v + step).count() / total) * 100,
-                       (self.get_queryset().filter(kompas__contains='BR', grup_kecepatan__gte=v,
-                                                   grup_kecepatan__lt=v + step).count() / total) * 100,
-                       (self.get_queryset().filter(kompas__contains='BL', grup_kecepatan__gte=v,
-                                                   grup_kecepatan__lt=v + step).count() / total) * 100
-                   ],
-                   'nama': str(v)[0:3] + ' - ' + str(v + step)[0:3] + ' m/s',
-                   'kompas': ['Utara', 'Timur Laut', 'Timur', 'Tenggara', 'Selatan', 'Barat Daya', 'Barat',
-                              'Barat Laut'],
-               } for i, v in enumerate(v_range)]
+        if total > 0:
+            obj = [{
+                       'id': i,
+                       'persentase': [
+                           (self.get_queryset().filter(kompas__contains='UT', grup_kecepatan__gte=v,
+                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
+                           (self.get_queryset().filter(kompas__contains='TL', grup_kecepatan__gte=v,
+                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
+                           (self.get_queryset().filter(kompas__contains='TM', grup_kecepatan__gte=v,
+                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
+                           (self.get_queryset().filter(kompas__contains='TG', grup_kecepatan__gte=v,
+                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
+                           (self.get_queryset().filter(kompas__contains='SL', grup_kecepatan__gte=v,
+                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
+                           (self.get_queryset().filter(kompas__contains='BD', grup_kecepatan__gte=v,
+                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
+                           (self.get_queryset().filter(kompas__contains='BR', grup_kecepatan__gte=v,
+                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
+                           (self.get_queryset().filter(kompas__contains='BL', grup_kecepatan__gte=v,
+                                                       grup_kecepatan__lt=v + step).count() / total) * 100
+                       ],
+                       'nama': str(v)[0:3] + ' - ' + str(v + step)[0:3] + ' m/s',
+                       'kompas': ['Utara', 'Timur Laut', 'Timur', 'Tenggara', 'Selatan', 'Barat Daya', 'Barat',
+                                  'Barat Laut'],
+                   } for i, v in enumerate(v_range)]
+        else:
+            obj = {}
 
         return HttpResponse(json.dumps(obj, sort_keys=True), content_type='Applications/json')
