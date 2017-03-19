@@ -83,7 +83,7 @@ def do_wtr(dt_frm, dt_to, grup, step, kompas='TM'):
     obj = {}
 
     for i in np.arange(0, float(grup), float(step)):
-        grp_v_i = grp_v.filter(kecepatan__gte=i, kecepatan__lt=i + float(step)).filter(kompas=kompas)
+        grp_v_i = grp_v.filter(kecepatan__gte=i, kecepatan__lt=i + float(step)).filter(kompas__contains=kompas)
 
         grp_v_i_acc1 = grp_v_i.values_list('akselerator1', flat=True)
         grp_v_i_acc2 = grp_v_i.values_list('akselerator2', flat=True)
