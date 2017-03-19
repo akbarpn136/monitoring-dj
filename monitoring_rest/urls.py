@@ -10,4 +10,7 @@ urlpatterns = [
     url(r'^windrose/(?P<date_from>\d{4}-\d{2}-\d{2})/(?P<date_to>\d{4}-\d{2}-\d{2})/$',
         views.MonitorWindrose.as_view(),
         name='windrose_angin'),
+    url(r'^waterfall/(?P<date_from>\d{4}-\d{2}-\d{2})/(?P<date_to>\d{4}-\d{2}-\d{2})/$',
+        views.MonitorWaterfall.as_view(),
+        name='waterfall_angin'),
 ]
