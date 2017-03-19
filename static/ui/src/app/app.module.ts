@@ -13,6 +13,7 @@ import {AnginComponent} from './angin/angin.component';
 import {SpinnerComponent} from './spinner/spinner.component';
 import {WindroseComponent} from './windrose/windrose.component';
 import { RmsComponent } from './rms/rms.component';
+import { WaterfallComponent } from './waterfall/waterfall.component';
 
 @NgModule({
     declarations: [
@@ -23,7 +24,8 @@ import { RmsComponent } from './rms/rms.component';
         AnginComponent,
         SpinnerComponent,
         WindroseComponent,
-        RmsComponent
+        RmsComponent,
+        WaterfallComponent
     ],
     imports: [
         BrowserModule,
