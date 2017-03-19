@@ -1,3 +1,81 @@
-<p>
-  waterfall works!
-</p>
+<div class="jumbotron jumbotron-fluid">
+    <div class="container">
+        <h1 class="display-3">{{title}}</h1>
+        <p class="lead">
+            {{deskripsi}}
+        </p>
+        <hr class="mt-2 mb-3">
+
+        <form [formGroup]="waterfallForm" (submit)="onFormWaterfallSubmit(waterfallForm.value)" novalidate>
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="tanggalawal">Tanggal Awal</label>
+                    <input type="date" class="form-control" id="tanggalawal" aria-describedby="tanggalAwal"
+                           placeholder="Tanggal awal"
+                           name="date_from"
+                           formControlName="date_from">
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="tanggalakhir">Tanggal Akhir</label>
+                    <input type="date" class="form-control" id="tanggalakhir" aria-describedby="tanggalAkhir"
+                           placeholder="Tanggal akhir"
+                           name="date_to"
+                           formControlName="date_to">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-6">
+                    <label for="tanggalawal">Waktu Awal</label>
+                    <input type="time" class="form-control" id="wkt_awal" aria-describedby="wkt_awal"
+                           placeholder="Waktu awal"
+                           name="wkt_awal"
+                           formControlName="wkt_awal">
+                    <small>Optional</small>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label for="tanggalawal">Waktu Akhir</label>
+                    <input type="time" class="form-control" id="wkt_akhir" aria-describedby="wkt_akhir"
+                           placeholder="Waktu akhir"
+                           name="wkt_akhir"
+                           formControlName="wkt_akhir">
+                    <small>Optional</small>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group col-md-4">
+                    <label for="arah">Arah</label>
+                    <select name="arah" id="arah" class="form-control"
+                            formControlName="arah">
+                        <option value="TM">Timur</option>
+                        <option value="BR">Barat</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="vmax">Kecepatan</label>
+                    <input type="number" step="any" class="form-control" id="vmax" aria-describedby="vmax"
+                           placeholder="Kecepatan maksimum"
+                           name="v_max"
+                           formControlName="v_max">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="step">Rentang</label>
+                    <input type="number" step="any" class="form-control" id="step" aria-describedby="step"
+                           placeholder="Rentang kecepatan"
+                           name="v_step"
+                           formControlName="v_step">
+                    <small>Misal: setiap 0.1, 0.2 m/s</small>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" [disabled]="!waterfallForm.valid">PROSES</button>
+            <ui-spinner [isShow]="isShow"></ui-spinner>
+        </form>
+    </div>
+</div>
+<div class="container-fluid">
+    <div id="plotWaterfall"></div>
+</div>
