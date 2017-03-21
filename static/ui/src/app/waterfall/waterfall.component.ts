@@ -61,7 +61,7 @@ export class WaterfallComponent implements OnInit {
                                 x: this.data_waterfall['x'][k],
                                 y: this.data_waterfall['y'][k],
                                 z: this.data_waterfall['z'][k],
-                                name: 'BUZZ',
+                                name: `Group V - ${k}`,
                                 mode: 'lines',
                                 type: 'scatter3d',
                                 line: {
