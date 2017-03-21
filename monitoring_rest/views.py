@@ -7,6 +7,7 @@ from rest_framework import generics
 
 from monitoring import models
 from . import serializers
+from .extras import DoFilter
 
 
 # Create your views here.
@@ -131,6 +132,41 @@ class MonitorRMS(ListView):
 
 
 class MonitorWaterfall(ListView):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.wkt_akh = ''
+        self.wkt_awl = ''
+        self.arah = ''
+        self.step = 0
+        self.vmax = 0
+        self.first_cutoff = 0.1
+        self.second_cutoff = 0.4
+        self.sample_spacing = 0.2
+        self.order = 3
+        self.do_filter = False
+
+    def dispatch(self, request, *args, **kwargs):
+        self.wkt_akh = self.request.GET.get('wkt_akhir')
+        self.wkt_awl = self.request.GET.get('wkt_awal')
+        self.arah = self.request.GET.get('arah')
+        self.step = float(self.request.GET.get('step'))
+        self.vmax = float(self.request.GET.get('vmax'))
+
+        self.first_cutoff = float(self.request.GET.get('first_cutoff')) if self.request.GET.get(
+            'first_cutoff') else self.first_cutoff
+
+        self.second_cutoff = float(self.request.GET.get('second_cutoff')) if self.request.GET.get(
+            'second_cutoff') else self.second_cutoff
+
+        self.sample_spacing = float(self.request.GET.get('sample_spacing')) if self.request.GET.get(
+            'sample_spacing') else self.sample_spacing
+
+        self.order = float(self.request.GET.get('order')) if self.request.GET.get('order') else self.order
+        self.do_filter = bool(self.request.GET.get('do_filter')) if self.request.GET.get(
+            'do_filter') else self.do_filter
+
+        return super(MonitorWaterfall, self).dispatch(request, *args, **kwargs)
+
     def get_queryset(self):
         date_from = self.kwargs['date_from']
         date_to = self.kwargs['date_to']
@@ -143,17 +179,12 @@ class MonitorWaterfall(ListView):
         return q
 
     def get(self, request, *args, **kwargs):
-        vmax = float(self.request.GET.get('vmax'))
-        step = float(self.request.GET.get('step'))
-        arah = self.request.GET.get('arah')
-        wkt_awl = self.request.GET.get('wkt_awal')
-        wkt_akh = self.request.GET.get('wkt_akhir')
-        obj = self.do_task(vmax, step, arah, wkt_awl, wkt_akh)
+        obj = self.do_task()
 
         return HttpResponse(json.dumps([obj], sort_keys=True), content_type='Applications/json')
 
-    def do_task(self, vmax, step, arah, wkt_awal, wkt_akhir):
-        v_range = numpy.arange(0.0, vmax, step).tolist()
+    def do_task(self):
+        v_range = numpy.arange(0.0, self.vmax, self.step).tolist()
         obj = {}
         data_x = []
         data_y = []
@@ -162,12 +193,12 @@ class MonitorWaterfall(ListView):
         for i, v in enumerate(v_range):
             v = round(v, 1)
 
-            if arah == 'BR':
+            if self.arah == 'BR':
                 data_acc = self.get_queryset().filter(
-                    waktu__gte=wkt_awal,
-                    waktu__lte=wkt_akhir,
+                    waktu__gte=self.wkt_awl,
+                    waktu__lte=self.wkt_akh,
                     kecepatan__gte=v,
-                    kecepatan__lt=v + step,
+                    kecepatan__lt=v + self.step,
                     arah__gte=225.0,
                     arah__lte=315.0
                 ).values_list(
@@ -176,10 +207,10 @@ class MonitorWaterfall(ListView):
 
             else:
                 data_acc = self.get_queryset().filter(
-                    waktu__gte=wkt_awal,
-                    waktu__lte=wkt_akhir,
+                    waktu__gte=self.wkt_awl,
+                    waktu__lte=self.wkt_akh,
                     kecepatan__gte=v,
-                    kecepatan__lt=v + step,
+                    kecepatan__lt=v + self.step,
                     arah__gte=45.0,
                     arah__lte=135.0
                 ).values_list(
@@ -193,20 +224,25 @@ class MonitorWaterfall(ListView):
             N = numpy_data_acc.size
 
             # Sample spacing
-            T = 0.2
+            T = self.sample_spacing
 
+            data_x.append([str(v)[:3]+' - '+str(v+self.step)[:3]] * N)
             if N > 0:
                 # FFT
-                zf = numpy.fft.fft(numpy_data_acc)
+                fltr = DoFilter(data=numpy_data_acc).butter_bandpass_filter(self.first_cutoff,
+                                                                            self.second_cutoff,
+                                                                            1 / T,
+                                                                            order=self.order)
+                zf = numpy.fft.fft(fltr)
                 m = numpy.absolute(zf[:N // 2])
                 yf = numpy.fft.fftfreq(N, d=T).tolist()
 
-                data_x.append([str(v)] * N)
                 data_y.append(yf[:N // 2])
                 data_z.append(m.tolist())
 
             else:
-                data_x = data_y = data_z = numpy.zeros(5).tolist()
+                data_y.append(0.0)
+                data_z.append(0.0)
 
         obj['x'] = data_x
         obj['y'] = data_y
