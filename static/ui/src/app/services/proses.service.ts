@@ -104,8 +104,16 @@ export class ProsesService {
             parameter.set('wkt_awal', '00:00');
         }
 
+        else {
+            parameter.set('wkt_awal', wkt_awal);
+        }
+
         if (!wkt_akhir) {
             parameter.set('wkt_akhir', '23:59');
+        }
+
+        else {
+            parameter.set('wkt_akhir', wkt_akhir);
         }
 
         let options = new RequestOptions({headers: header, search: parameter});
