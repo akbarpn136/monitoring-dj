@@ -93,12 +93,13 @@ export class ProsesService {
             );
     }
 
-    ambilWaterfallAngin(date_from, date_to, vmax, step, arah, wkt_awal, wkt_akhir) {
+    ambilWaterfallAngin(date_from, date_to, vmax, step, arah, wkt_awal, wkt_akhir, simplified) {
         let header = new Headers({'Content-Type': 'application/json'});
         let parameter = new URLSearchParams();
         parameter.set('vmax', vmax);
         parameter.set('step', step);
         parameter.set('arah', arah);
+        parameter.set('simplified', simplified);
 
         if (!wkt_awal) {
             parameter.set('wkt_awal', '00:00');
