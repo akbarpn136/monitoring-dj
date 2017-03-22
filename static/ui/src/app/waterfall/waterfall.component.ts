@@ -37,6 +37,7 @@ export class WaterfallComponent implements OnInit {
             arah: this.fb.control('', Validators.required),
             wkt_awal: this.fb.control(''),
             wkt_akhir: this.fb.control(''),
+            simplified: this.fb.control(true),
         });
     }
 
@@ -48,9 +49,12 @@ export class WaterfallComponent implements OnInit {
         let arah = obj['arah'];
         let wkt_awal = obj['wkt_awal'];
         let wkt_akhir = obj['wkt_akhir'];
+        let simplified = obj['simplified'];
 
         this.isShow = true;
-        this.waterfall.ambilWaterfallAngin(date_from, date_to, vmax, step, arah, wkt_awal, wkt_akhir).subscribe(
+        this.waterfall.ambilWaterfallAngin(date_from, date_to,
+            vmax, step, arah,
+            wkt_awal, wkt_akhir, simplified).subscribe(
             val => {
                 this.data = [];
                 this.data_waterfall = val[0];
