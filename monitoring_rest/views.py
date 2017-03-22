@@ -7,7 +7,7 @@ from rest_framework import generics
 
 from monitoring import models
 from . import serializers
-from .extras import DoFilter
+from .extras import DoFFT
 
 
 # Create your views here.
@@ -144,6 +144,7 @@ class MonitorWaterfall(ListView):
         self.sample_spacing = 0.2
         self.order = 3
         self.do_filter = False
+        self.simplified = True
 
     def dispatch(self, request, *args, **kwargs):
         self.wkt_akh = self.request.GET.get('wkt_akhir')
@@ -162,8 +163,8 @@ class MonitorWaterfall(ListView):
             'sample_spacing') else self.sample_spacing
 
         self.order = float(self.request.GET.get('order')) if self.request.GET.get('order') else self.order
-        self.do_filter = bool(self.request.GET.get('do_filter')) if self.request.GET.get(
-            'do_filter') else self.do_filter
+        self.do_filter = True if self.request.GET.get('do_filter') else self.do_filter
+        self.simplified = False if self.request.GET.get('simplified') == 'false' else self.simplified
 
         return super(MonitorWaterfall, self).dispatch(request, *args, **kwargs)
 
@@ -190,59 +191,118 @@ class MonitorWaterfall(ListView):
         data_y = []
         data_z = []
 
-        for i, v in enumerate(v_range):
-            v = round(v, 1)
-
+        if self.simplified:
+            stat = '''
+                            SELECT
+                              id,
+                              tanggal,
+                              waktu,
+                              arah,
+                              grup_kecepatan,
+                              akselerator1,
+                              akselerator2,
+                              akselerator3,
+                              akselerator4,
+                              akselerator5,
+                              EXTRACT(MINUTE FROM waktu)    AS by_minute,
+                              EXTRACT(HOUR FROM waktu)      AS by_hour,
+                              ROUND(AVG(grup_kecepatan), 1) AS STATS
+                            FROM monitoring_dataangin
+                            WHERE
+                              tanggal >= %s
+                              AND
+                              tanggal <= %s
+                              AND
+                              arah >= %s
+                              AND
+                              arah <= %s
+                            GROUP BY
+                              by_hour, by_minute
+                            ORDER BY
+                              tanggal ASC,
+                              waktu ASC
+                            '''
             if self.arah == 'BR':
-                data_acc = self.get_queryset().filter(
-                    waktu__gte=self.wkt_awl,
-                    waktu__lte=self.wkt_akh,
-                    kecepatan__gte=v,
-                    kecepatan__lt=v + self.step,
-                    arah__gte=225.0,
-                    arah__lte=315.0
-                ).values_list(
-                    'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
-                )
+                q = models.DataAngin.objects.raw(stat, [self.kwargs['date_from'],
+                                                        self.kwargs['date_to'],
+                                                        '225', '315'])
+
+                q = list(q)
 
             else:
-                data_acc = self.get_queryset().filter(
-                    waktu__gte=self.wkt_awl,
-                    waktu__lte=self.wkt_akh,
-                    kecepatan__gte=v,
-                    kecepatan__lt=v + self.step,
-                    arah__gte=45.0,
-                    arah__lte=135.0
-                ).values_list(
-                    'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
-                )
+                q = models.DataAngin.objects.raw(stat, [self.kwargs['date_from'],
+                                                        self.kwargs['date_to'],
+                                                        '45', '135'])
 
-            # Data akselerometer
-            numpy_data_acc = numpy.array(data_acc).flatten()
+                q = list(q)
 
-            # Jumlah data
-            N = numpy_data_acc.size
+            kecepatan_mean = [v.STATS for v in q]
+            kecepatan, idx = numpy.unique(kecepatan_mean, return_index=True)
+            idx = sorted(idx.tolist())
 
-            # Sample spacing
-            T = self.sample_spacing
+            for k, dt in enumerate(idx):
+                if k < len(idx) - 1:
+                    if self.arah == 'BR':
+                        data_acc = self.get_queryset().filter(
+                            waktu__gte=q[idx[k]].waktu,
+                            waktu__lte=q[idx[k + 1]].waktu,
+                            arah__gte=225.0,
+                            arah__lte=315.0
+                        ).values_list(
+                            'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
+                        )
 
-            data_x.append([str(v)[:3]+' - '+str(v+self.step)[:3]] * N)
-            if N > 0:
-                # FFT
-                fltr = DoFilter(data=numpy_data_acc).butter_bandpass_filter(self.first_cutoff,
-                                                                            self.second_cutoff,
-                                                                            1 / T,
-                                                                            order=self.order)
-                zf = numpy.fft.fft(fltr)
-                m = numpy.absolute(zf[:N // 2])
-                yf = numpy.fft.fftfreq(N, d=T).tolist()
+                    else:
+                        data_acc = self.get_queryset().filter(
+                            waktu__gte=q[idx[k]].waktu,
+                            waktu__lte=q[idx[k + 1]].waktu,
+                            arah__gte=45.0,
+                            arah__lte=135.0
+                        ).values_list(
+                            'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
+                        )
 
-                data_y.append(yf[:N // 2])
-                data_z.append(m.tolist())
+                    N, v1, v2 = DoFFT(data_acc, self.sample_spacing, self.first_cutoff, self.second_cutoff,
+                                      self.order).make_fft()
 
-            else:
-                data_y.append(0.0)
-                data_z.append(0.0)
+                    data_x.append([str(kecepatan[k])] * N)
+                    data_y.append(v1)
+                    data_z.append(v2)
+
+        else:
+            for i, v in enumerate(v_range):
+                v = round(v, 1)
+
+                if self.arah == 'BR':
+                    data_acc = self.get_queryset().filter(
+                        waktu__gte=self.wkt_awl,
+                        waktu__lte=self.wkt_akh,
+                        kecepatan__gte=v,
+                        kecepatan__lt=v + self.step,
+                        arah__gte=225.0,
+                        arah__lte=315.0
+                    ).values_list(
+                        'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
+                    )
+
+                else:
+                    data_acc = self.get_queryset().filter(
+                        waktu__gte=self.wkt_awl,
+                        waktu__lte=self.wkt_akh,
+                        kecepatan__gte=v,
+                        kecepatan__lt=v + self.step,
+                        arah__gte=45.0,
+                        arah__lte=135.0
+                    ).values_list(
+                        'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
+                    )
+
+                N, v1, v2 = DoFFT(data_acc, self.sample_spacing, self.first_cutoff, self.second_cutoff,
+                                  self.order).make_fft()
+
+                data_x.append([str(v)[:3] + ' - ' + str(v + self.step)[:3]] * N)
+                data_y.append(v1)
+                data_z.append(v2)
 
         obj['x'] = data_x
         obj['y'] = data_y
