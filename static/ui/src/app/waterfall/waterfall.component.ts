@@ -17,6 +17,7 @@ export class WaterfallComponent implements OnInit {
     layout: any;
     data_waterfall: any;
     private isShow: boolean = false;
+    private isSimplified: boolean = true;
 
     constructor(private fb: FormBuilder,
                 private waterfall: ProsesService) {
@@ -29,16 +30,41 @@ export class WaterfallComponent implements OnInit {
     }
 
     createWaterfallForm() {
+        let cekBox = this.fb.control(this.isSimplified);
+        let rentang = this.fb.control({value: '', disabled: this.isSimplified});
+        let max = this.fb.control({value: '', disabled: this.isSimplified});
+        let wkt_awal = this.fb.control({value: '', disabled: this.isSimplified});
+        let wkt_akhir = this.fb.control({value: '', disabled: this.isSimplified});
+
         this.waterfallForm = this.fb.group({
             date_from: this.fb.control('', Validators.required),
             date_to: this.fb.control('', Validators.required),
-            v_max: this.fb.control('', Validators.required),
-            v_step: this.fb.control('', Validators.required),
+            v_max: max,
+            v_step: rentang,
             arah: this.fb.control('', Validators.required),
-            wkt_awal: this.fb.control(''),
-            wkt_akhir: this.fb.control(''),
-            simplified: this.fb.control(true),
+            wkt_awal: wkt_awal,
+            wkt_akhir: wkt_akhir,
+            simplified: cekBox,
         });
+
+        cekBox.valueChanges.subscribe(
+            val => {
+                if (val) {
+                    max.disable();
+                    rentang.disable();
+                    wkt_awal.disable();
+                    wkt_akhir.disable();
+                }
+                else {
+                    max.setValidators(Validators.required);
+                    rentang.setValidators(Validators.required);
+                    max.enable();
+                    rentang.enable();
+                    wkt_awal.enable();
+                    wkt_akhir.enable();
+                }
+            }
+        );
     }
 
     onFormWaterfallSubmit(obj) {
