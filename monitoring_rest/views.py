@@ -1,6 +1,7 @@
 import json
 
 import numpy
+from scipy import stats
 from django.http import HttpResponse
 from django.views.generic import ListView
 from rest_framework import generics
@@ -78,6 +79,49 @@ class MonitorWindrose(ListView):
         else:
 
             obj = [{}]
+
+        return obj
+
+
+class MonitorPdf(ListView):
+    def get_queryset(self):
+        date_from = self.kwargs['date_from']
+        date_to = self.kwargs['date_to']
+
+        q = models.DataAngin.objects.filter(
+            tanggal__gte=date_from,
+            tanggal__lte=date_to
+        ).order_by('grup_kecepatan')
+
+        return q
+
+    def get(self, request, *args, **kwargs):
+        numpy.seterr(invalid='ignore')
+        obj = self.do_task()
+
+        return HttpResponse(json.dumps([obj], sort_keys=True), content_type='Applications/json')
+
+    def do_task(self):
+        obj = {}
+
+        # Kumpulan data angin
+        list_kecepatan = [v.grup_kecepatan for v in self.get_queryset()]
+
+        if self.get_queryset().count() > 0:
+            # Fit a normal distribution to the data:
+            fitting = stats.norm.fit(list_kecepatan)
+
+            # Generate PDF
+            list_kecepatan_pdf = stats.norm.pdf(list_kecepatan, fitting[0], fitting[1]).tolist()
+
+        else:
+            fitting = numpy.zeros(4).tolist()
+            list_kecepatan_pdf = numpy.zeros(len(list_kecepatan)).tolist()
+
+        obj['kecepatan_x'] = list_kecepatan
+        obj['kecepatan_y'] = list_kecepatan_pdf
+        obj['mean'] = round(fitting[0], 2)
+        obj['std'] = round(fitting[1], 2)
 
         return obj
 
