@@ -15,6 +15,7 @@ import {WindroseComponent} from './windrose/windrose.component';
 import { RmsComponent } from './rms/rms.component';
 import { WaterfallComponent } from './waterfall/waterfall.component';
 import { PdfComponent } from './pdf/pdf.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
     declarations: [
@@ -27,7 +28,8 @@ import { PdfComponent } from './pdf/pdf.component';
         WindroseComponent,
         RmsComponent,
         WaterfallComponent,
-        PdfComponent
+        PdfComponent,
+        LoginComponent
     ],
     imports: [
         BrowserModule,
