@@ -14,6 +14,7 @@ import {SpinnerComponent} from './spinner/spinner.component';
 import {WindroseComponent} from './windrose/windrose.component';
 import { RmsComponent } from './rms/rms.component';
 import { WaterfallComponent } from './waterfall/waterfall.component';
+import { PdfComponent } from './pdf/pdf.component';
 
 @NgModule({
     declarations: [
@@ -25,7 +26,8 @@ import { WaterfallComponent } from './waterfall/waterfall.component';
         SpinnerComponent,
         WindroseComponent,
         RmsComponent,
-        WaterfallComponent
+        WaterfallComponent,
+        PdfComponent
     ],
     imports: [
         BrowserModule,
