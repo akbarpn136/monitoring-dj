@@ -11,6 +11,7 @@ export class ProsesService {
     private URL_WINDROSE = 'http://localhost:8000/v1/monitor/windrose/';
     private URL_RMS = 'http://localhost:8000/v1/monitor/rms/';
     private URL_WATERFALL = 'http://localhost:8000/v1/monitor/waterfall/';
+    private URL_PDF = 'http://localhost:8000/v1/monitor/pdf/';
 
     constructor(private http: Http) {
     }
@@ -117,6 +118,29 @@ export class ProsesService {
         let options = new RequestOptions({headers: header, search: parameter});
 
         return this.http.get(`${this.URL_WATERFALL}${date_from}/${date_to}/`, options)
+            .map(
+                (res: Response) => {
+                    return res.json();
+                }
+            )
+            .catch(
+                (err: Response | any) => {
+                    if (err instanceof Response) {
+                        return Observable.throw(err.json());
+                    }
+
+                    else {
+                        return err.message;
+                    }
+                }
+            );
+    }
+
+    ambilPdfAngin(date_from, date_to) {
+        let header = new Headers({'Content-Type': 'Application/json'});
+        let options = new RequestOptions({headers: header});
+
+        return this.http.get(`${this.URL_PDF}${date_from}/${date_to}/`, options)
             .map(
                 (res: Response) => {
                     return res.json();
