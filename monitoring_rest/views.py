@@ -185,7 +185,6 @@ class MonitorWaterfall(ListView):
         return HttpResponse(json.dumps([obj], sort_keys=True), content_type='Applications/json')
 
     def do_task(self):
-        v_range = numpy.arange(0.0, self.vmax, self.step).tolist()
         obj = {}
         data_x = []
         data_y = []
@@ -270,6 +269,7 @@ class MonitorWaterfall(ListView):
                     data_z.append(v2)
 
         else:
+            v_range = numpy.arange(0.0, self.vmax, self.step).tolist()
             for i, v in enumerate(v_range):
                 v = round(v, 1)
 
