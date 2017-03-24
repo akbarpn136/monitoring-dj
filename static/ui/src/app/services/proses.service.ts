@@ -101,20 +101,17 @@ export class ProsesService {
         parameter.set('arah', arah);
         parameter.set('simplified', simplified);
 
-        if (!wkt_awal) {
+        if (simplified) {
             parameter.set('wkt_awal', '00:00');
+            parameter.set('wkt_akhir', '23:59');
+            parameter.set('step', '0');
+            parameter.set('vmax', '0');
         }
-
         else {
             parameter.set('wkt_awal', wkt_awal);
-        }
-
-        if (!wkt_akhir) {
-            parameter.set('wkt_akhir', '23:59');
-        }
-
-        else {
             parameter.set('wkt_akhir', wkt_akhir);
+            parameter.set('step', step);
+            parameter.set('vmax', vmax);
         }
 
         let options = new RequestOptions({headers: header, search: parameter});
