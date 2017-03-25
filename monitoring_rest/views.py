@@ -1,8 +1,12 @@
 import json
 
 import numpy
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.response import Response
 from scipy import stats
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.generic import ListView
 from rest_framework import generics
 
@@ -12,6 +16,45 @@ from .extras import DoFFT
 
 
 # Create your views here.
+class GetToken(ObtainAuthToken):
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+
+        return Response({
+            'token': token.key,
+            'name': User.objects.get(pk=token.user.pk).get_full_name(),
+            'isSuper': User.objects.get(pk=token.user.pk).is_superuser
+        })
+
+
+class CheckToken(ListView):
+    model = Token
+
+    def get_queryset(self):
+        token = Token.objects.filter(key=self.kwargs['token'])
+
+        return token
+
+    def get(self, request, *args, **kwargs):
+        isExist = self.get_queryset().exists()
+        name = self.get_queryset().values_list('user', flat=True)
+
+        if isExist:
+            name = User.objects.get(pk=name[0]).get_full_name()
+        else:
+            name = 'Anonymous'
+
+        stat = {
+            'exist': isExist,
+            'name': name
+        }
+
+        return JsonResponse(data=stat, safe=False)
+
+
 class MonitorAngin(generics.ListCreateAPIView):
     queryset = models.DataAngin.objects.all()
     serializer_class = serializers.MonitorAnginSerializer
