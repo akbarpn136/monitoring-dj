@@ -1,3 +1,21 @@
-<p>
-  login works!
-</p>
+<div class="container">
+    <form [formGroup]="loginForm"
+          class="form-signin mt-5"
+          novalidate autocomplete="off" (submit)="onLoginSubmit(loginForm.value)">
+        <h2 class="form-signin-heading">Silahkan login</h2>
+
+        <label for="inputUsername" class="sr-only">Username</label>
+        <input type="text"
+               id="inputUsername"
+               class="form-control" placeholder="Username" autofocus
+               formControlName="username" name="username">
+
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password"
+               id="inputPassword"
+               class="form-control" placeholder="Password"
+               formControlName="password" name="password">
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit" [disabled]="!loginForm.valid">MASUK</button>
+    </form>
+</div>
