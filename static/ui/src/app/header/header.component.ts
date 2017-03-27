@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {NavigationEnd, Router} from "@angular/router";
 
 @Component({
     selector: 'app-header',
@@ -7,7 +8,18 @@ import {Component, OnInit} from '@angular/core';
 })
 export class HeaderComponent implements OnInit {
     private status: boolean;
-    constructor() {
+    private isAuth: boolean;
+
+    constructor(private route: Router) {
+        this.route.events.subscribe(
+            val => {
+                if (val instanceof NavigationEnd) {
+                    let qwerty = localStorage.getItem('qwerty');
+
+                    this.isAuth = !!qwerty;
+                }
+            }
+        );
     }
 
     ngOnInit() {
@@ -15,5 +27,16 @@ export class HeaderComponent implements OnInit {
 
     onStatusClicked(status) {
         this.status = status;
+    }
+
+    onClicked(e) {
+        this.isAuth = false;
+        localStorage.setItem('qwerty', '');
+        localStorage.setItem('user', '');
+        localStorage.setItem('super', '');
+        //noinspection JSIgnoredPromiseFromCall
+        this.route.navigate(['login']);
+
+        e.preventDefault();
     }
 }
