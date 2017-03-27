@@ -16,6 +16,8 @@ import { RmsComponent } from './rms/rms.component';
 import { WaterfallComponent } from './waterfall/waterfall.component';
 import { PdfComponent } from './pdf/pdf.component';
 import { LoginComponent } from './login/login.component';
+import {GuardService} from "./services/guard.service";
+import {AuthService} from "./services/auth.service";
 
 @NgModule({
     declarations: [
@@ -38,7 +40,7 @@ import { LoginComponent } from './login/login.component';
         HttpModule,
         route
     ],
-    providers: [],
+    providers: [AuthService, GuardService],
     bootstrap: [AppComponent]
 })
 export class AppModule {
