@@ -8,15 +8,16 @@ import {RmsComponent} from "./rms/rms.component";
 import {WaterfallComponent} from "./waterfall/waterfall.component";
 import {PdfComponent} from "./pdf/pdf.component";
 import {LoginComponent} from "./login/login.component";
+import {GuardService} from "./services/guard.service";
 
 const APP_ROUTES: Route[] = [
-    {path: 'rms', component: RmsComponent},
-    {path: 'waterfall', component: WaterfallComponent},
-    {path: 'pdf', component: PdfComponent},
-    {path: 'windrose', component: WindroseComponent},
-    {path: 'angin', component: AnginComponent},
+    {path: 'rms', component: RmsComponent, canActivate: [GuardService]},
+    {path: 'waterfall', component: WaterfallComponent, canActivate: [GuardService]},
+    {path: 'pdf', component: PdfComponent, canActivate: [GuardService]},
+    {path: 'windrose', component: WindroseComponent, canActivate: [GuardService]},
+    {path: 'angin', component: AnginComponent, canActivate: [GuardService]},
     {path: 'login', component: LoginComponent},
-    {path: '', component: AnginComponent},
+    {path: '', component: AnginComponent, canActivate: [GuardService]},
     {path: '**', redirectTo:'', pathMatch:'full'},
 ];
 
