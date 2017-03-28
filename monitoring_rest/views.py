@@ -6,13 +6,14 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from scipy import stats
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.views.generic import ListView
-from rest_framework import generics
+from rest_framework import generics, permissions
 
 from monitoring import models
 from . import serializers
 from .extras import DoFFT
+from .permissions import IsAuthenticated
 
 
 # Create your views here.
@@ -57,6 +58,7 @@ class CheckToken(ListView):
 
 class MonitorAngin(generics.ListCreateAPIView):
     queryset = models.DataAngin.objects.all()
+    permission_classes = permissions.is_authenticated
     serializer_class = serializers.MonitorAnginSerializer
 
     def get_queryset(self):
@@ -86,7 +88,12 @@ class MonitorWindrose(ListView):
     def get(self, request, *args, **kwargs):
         vmax = float(self.request.GET.get('vmax'))
         step = float(self.request.GET.get('step'))
-        obj = self.do_task(vmax, step)
+
+        if IsAuthenticated(request.user.is_authenticated).check():
+            obj = self.do_task(vmax, step)
+        else:
+            obj = {'detail': 'Invalid token.'}
+            return HttpResponseForbidden(json.dumps(obj, sort_keys=True), content_type='Applications/json')
 
         return HttpResponse(json.dumps(obj, sort_keys=True), content_type='Applications/json')
 
@@ -140,7 +147,12 @@ class MonitorPdf(ListView):
 
     def get(self, request, *args, **kwargs):
         numpy.seterr(invalid='ignore')
-        obj = self.do_task()
+
+        if IsAuthenticated(request.user.is_authenticated).check():
+            obj = self.do_task()
+        else:
+            obj = {'detail': 'Invalid token.'}
+            return HttpResponseForbidden(json.dumps(obj, sort_keys=True), content_type='Applications/json')
 
         return HttpResponse(json.dumps([obj], sort_keys=True), content_type='Applications/json')
 
@@ -174,7 +186,12 @@ class MonitorRMS(ListView):
         vmax = float(self.request.GET.get('vmax'))
         step = float(self.request.GET.get('step'))
         arah = self.request.GET.get('arah')
-        obj = self.do_task(vmax, step, arah)
+
+        if IsAuthenticated(request.user.is_authenticated).check():
+            obj = self.do_task(vmax, step, arah)
+        else:
+            obj = {'detail': 'Invalid token.'}
+            return HttpResponseForbidden(json.dumps(obj, sort_keys=True), content_type='Applications/json')
 
         return HttpResponse(json.dumps([obj], sort_keys=True), content_type='Applications/json')
 
@@ -267,7 +284,12 @@ class MonitorWaterfall(ListView):
         return q
 
     def get(self, request, *args, **kwargs):
-        obj = self.do_task()
+
+        if IsAuthenticated(request.user.is_authenticated).check():
+            obj = self.do_task()
+        else:
+            obj = {'detail': 'Invalid token.'}
+            return HttpResponseForbidden(json.dumps(obj, sort_keys=True), content_type='Applications/json')
 
         return HttpResponse(json.dumps([obj], sort_keys=True), content_type='Applications/json')
 
