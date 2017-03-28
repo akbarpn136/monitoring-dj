@@ -14,6 +14,9 @@ export class AnginComponent implements OnInit {
     deskripsi: string;
     anginForm: FormGroup;
     isShow: boolean = false;
+    isError: boolean = false;
+    key: any;
+    message: any;
 
     private data: any;
     private layout: any;
@@ -111,6 +114,12 @@ export class AnginComponent implements OnInit {
 
                 Plotly.newPlot('plotAngin', this.data, this.layout);
                 this.isShow = false;
+            },
+            err => {
+                this.isShow = false;
+                this.isError = true;
+                this.key = Object.keys(err);
+                this.message = err;
             }
         );
     }

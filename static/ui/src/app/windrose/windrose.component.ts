@@ -17,6 +17,9 @@ export class WindroseComponent implements OnInit {
     layout: any;
     data_windrose: any;
     private isShow: boolean = false;
+    private isError: boolean;
+    private key: any;
+    private message: any;
 
     constructor(private fb: FormBuilder,
                 private windrose: ProsesService) {
@@ -76,6 +79,12 @@ export class WindroseComponent implements OnInit {
                 };
 
                 Plotly.newPlot('plotWindrose', this.data, this.layout);
+            },
+            err => {
+                this.isShow = false;
+                this.isError = true;
+                this.key = Object.keys(err);
+                this.message = err;
             }
         );
     }

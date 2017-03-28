@@ -17,6 +17,9 @@ export class WaterfallComponent implements OnInit {
     layout: any;
     data_waterfall: any;
     private isShow: boolean = false;
+    private isError: boolean;
+    key: any;
+    message: any;
     private isSimplified: boolean = true;
 
     constructor(private fb: FormBuilder,
@@ -155,6 +158,12 @@ export class WaterfallComponent implements OnInit {
                 };
                 Plotly.newPlot('plotWaterfall', this.data, this.layout);
                 this.isShow = false;
+            },
+            err => {
+                this.isShow = false;
+                this.isError = true;
+                this.key = Object.keys(err);
+                this.message = err;
             }
         );
     }

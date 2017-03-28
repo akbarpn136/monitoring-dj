@@ -17,6 +17,9 @@ export class RmsComponent implements OnInit {
     layout: any;
     data_rms: any;
     private isShow: boolean = false;
+    private isError: boolean;
+    key: any;
+    message: any;
 
     constructor(private fb: FormBuilder,
                 private rms: ProsesService) {
@@ -67,6 +70,12 @@ export class RmsComponent implements OnInit {
                 this.data = [trace];
 
                 Plotly.newPlot('plotRMS', this.data, this.layout);
+            },
+            err => {
+                this.isShow = false;
+                this.isError = true;
+                this.key = Object.keys(err);
+                this.message = err;
             }
         );
     }

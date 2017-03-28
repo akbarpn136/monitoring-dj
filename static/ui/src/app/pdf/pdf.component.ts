@@ -14,6 +14,9 @@ export class PdfComponent implements OnInit {
     deskripsi: string;
     pdfForm: FormGroup;
     isShow: boolean = false;
+    isError: boolean;
+    key: any;
+    message: any;
 
     private data: any;
     private layout: any;
@@ -73,6 +76,12 @@ export class PdfComponent implements OnInit {
 
                 Plotly.newPlot('plotPdf', this.data, this.layout);
                 this.isShow = false;
+            },
+            err => {
+                this.isShow = false;
+                this.isError = true;
+                this.key = Object.keys(err);
+                this.message = err;
             }
         );
     }
