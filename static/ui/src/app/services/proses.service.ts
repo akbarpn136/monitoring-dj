@@ -18,6 +18,8 @@ export class ProsesService {
 
     ambilAtributAngin(date_from, date_to) {
         let header = new Headers({'Content-Type': 'Application/json'});
+        let qwerty = localStorage.getItem('qwerty');
+        header.set('Authorization', `token ${qwerty}`);
         let options = new RequestOptions({headers: header});
 
         return this.http.get(`${this.URL_ANGIN}${date_from}/${date_to}/`, options)
@@ -41,6 +43,8 @@ export class ProsesService {
 
     ambilWindroseAngin(date_from, date_to, vmax, step) {
         let header = new Headers({'Content-Type': 'application/json'});
+        let qwerty = localStorage.getItem('qwerty');
+        header.set('Authorization', `token ${qwerty}`);
         let parameter = new URLSearchParams();
         parameter.set('vmax', vmax);
         parameter.set('step', step);
@@ -68,6 +72,8 @@ export class ProsesService {
 
     ambilRMSAngin(vmax, step, arah) {
         let header = new Headers({'Content-Type': 'application/json'});
+        let qwerty = localStorage.getItem('qwerty');
+        header.set('Authorization', `token ${qwerty}`);
         let parameter = new URLSearchParams();
         parameter.set('vmax', vmax);
         parameter.set('step', step);
@@ -96,6 +102,8 @@ export class ProsesService {
 
     ambilWaterfallAngin(date_from, date_to, vmax, step, arah, wkt_awal, wkt_akhir, simplified) {
         let header = new Headers({'Content-Type': 'application/json'});
+        let qwerty = localStorage.getItem('qwerty');
+        header.set('Authorization', `token ${qwerty}`);
         let parameter = new URLSearchParams();
         parameter.set('vmax', vmax);
         parameter.set('step', step);
@@ -138,6 +146,8 @@ export class ProsesService {
 
     ambilPdfAngin(date_from, date_to) {
         let header = new Headers({'Content-Type': 'Application/json'});
+        let qwerty = localStorage.getItem('qwerty');
+        header.set('Authorization', `token ${qwerty}`);
         let options = new RequestOptions({headers: header});
 
         return this.http.get(`${this.URL_PDF}${date_from}/${date_to}/`, options)
