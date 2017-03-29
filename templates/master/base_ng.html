@@ -1,0 +1,34 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        Aplikasi Monitoring BBTA3
+    </title>
+    <base href="/">
+
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="{% static 'semantic.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'custom.css' %}">
+    <link rel="stylesheet" href="{% static 'ui/dist/assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'ui/dist/assets/css/csspin-round.css' %}">
+    <link rel="stylesheet" href="{% static 'ui/dist/styles.d41d8cd98f00b204e980.bundle.css' %}">
+
+    {% block style %}{% endblock %}
+</head>
+<body>
+<app-root></app-root>
+
+<script type="text/javascript" src="{% static 'ui/dist/assets/js/plotly-latest.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'ui/dist/inline.55fbc88e031047035c86.bundle.js' %}"></script>
+<script type="text/javascript" src="{% static 'ui/dist/polyfills.d0685ce3b4cf39f90b93.bundle.js' %}"></script>
+<script type="text/javascript" src="{% static 'ui/dist/vendor.602f31015dc09c5f370a.bundle.js' %}"></script>
+<script type="text/javascript" src="{% static 'ui/dist/main.3167ed67609f8117b22d.bundle.js' %}"></script>
+
+{% block js %}{% endblock %}
+</body>
+</html>
