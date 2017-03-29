@@ -73,7 +73,7 @@ class MonitorAngin(generics.ListCreateAPIView):
         return q
 
 
-class MonitorWindrose(ListView):
+class MonitorWindrose(generics.ListAPIView):
     def get_queryset(self):
         date_from = self.kwargs['date_from']
         date_to = self.kwargs['date_to']
@@ -89,7 +89,7 @@ class MonitorWindrose(ListView):
         vmax = float(self.request.GET.get('vmax'))
         step = float(self.request.GET.get('step'))
 
-        if IsAuthenticated(request.user.is_authenticated).check():
+        if IsAuthenticated(request.user.is_authenticated()).check():
             obj = self.do_task(vmax, step)
         else:
             obj = {'detail': 'Invalid token.'}
@@ -133,7 +133,7 @@ class MonitorWindrose(ListView):
         return obj
 
 
-class MonitorPdf(ListView):
+class MonitorPdf(generics.ListAPIView):
     def get_queryset(self):
         date_from = self.kwargs['date_from']
         date_to = self.kwargs['date_to']
@@ -148,7 +148,7 @@ class MonitorPdf(ListView):
     def get(self, request, *args, **kwargs):
         numpy.seterr(invalid='ignore')
 
-        if IsAuthenticated(request.user.is_authenticated).check():
+        if IsAuthenticated(request.user.is_authenticated()).check():
             obj = self.do_task()
         else:
             obj = {'detail': 'Invalid token.'}
@@ -181,13 +181,13 @@ class MonitorPdf(ListView):
         return obj
 
 
-class MonitorRMS(ListView):
+class MonitorRMS(generics.ListAPIView):
     def get(self, request, *args, **kwargs):
         vmax = float(self.request.GET.get('vmax'))
         step = float(self.request.GET.get('step'))
         arah = self.request.GET.get('arah')
 
-        if IsAuthenticated(request.user.is_authenticated).check():
+        if IsAuthenticated(request.user.is_authenticated()).check():
             obj = self.do_task(vmax, step, arah)
         else:
             obj = {'detail': 'Invalid token.'}
@@ -235,7 +235,7 @@ class MonitorRMS(ListView):
         return obj
 
 
-class MonitorWaterfall(ListView):
+class MonitorWaterfall(generics.ListAPIView):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.wkt_akh = ''
@@ -285,7 +285,7 @@ class MonitorWaterfall(ListView):
 
     def get(self, request, *args, **kwargs):
 
-        if IsAuthenticated(request.user.is_authenticated).check():
+        if IsAuthenticated(request.user.is_authenticated()).check():
             obj = self.do_task()
         else:
             obj = {'detail': 'Invalid token.'}
