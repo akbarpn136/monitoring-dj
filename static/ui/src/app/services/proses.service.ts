@@ -25,11 +25,11 @@ export class ProsesService {
                 break;
 
             case 'prod':
-                this.URL_ANGIN = 'http://localhost:8000/v1/monitor/angin/';
-                this.URL_WINDROSE = 'http://localhost:8000/v1/monitor/windrose/';
-                this.URL_RMS = 'http://localhost:8000/v1/monitor/rms/';
-                this.URL_WATERFALL = 'http://localhost:8000/v1/monitor/waterfall/';
-                this.URL_PDF = 'http://localhost:8000/v1/monitor/pdf/';
+                this.URL_ANGIN = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/angin/';
+                this.URL_WINDROSE = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/windrose/';
+                this.URL_RMS = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/rms/';
+                this.URL_WATERFALL = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/waterfall/';
+                this.URL_PDF = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/pdf/';
                 break;
 
             case 'native':
