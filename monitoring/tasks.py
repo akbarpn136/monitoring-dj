@@ -13,7 +13,9 @@ from .tambahan import gen_hex_colour_code, butter_bandpass_filter
 
 @app.task
 def do_angin(dt_frm, dt_to):
-    temp_output = serializers.serialize('json', DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to),
+    temp_output = serializers.serialize('json',
+                                        DataAngin.objects.filter(tanggal__gte=dt_frm, tanggal__lte=dt_to).order_by(
+                                            'tanggal', 'waktu'),
                                         fields=('tanggal', 'waktu', 'arah', 'kecepatan', 'akselerator5'))
 
     return temp_output
