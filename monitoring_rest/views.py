@@ -58,7 +58,7 @@ class CheckToken(ListView):
 
 class MonitorAngin(generics.ListCreateAPIView):
     queryset = models.DataAngin.objects.all()
-    permission_classes = permissions.is_authenticated
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.MonitorAnginSerializer
 
     def get_queryset(self):
