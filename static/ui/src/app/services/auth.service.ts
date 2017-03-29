@@ -4,13 +4,30 @@ import {Headers, Http, RequestOptions, Response} from "@angular/http";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {Observable} from "rxjs";
+import {environment} from '../../environments/environment';
 
 @Injectable()
 export class AuthService {
-    private URL_VALID = 'http://localhost:8000/v1/monitor/token_check/';
-    private TOKEN_URL = 'http://localhost:8000/v1/monitor/token_auth/';
+    private URL_VALID: string;
+    private TOKEN_URL: string;
 
     constructor(private http: Http) {
+        switch (environment.envName) {
+            case 'dev':
+                this.URL_VALID = 'http://localhost:8000/v1/monitor/token_check/';
+                this.TOKEN_URL = 'http://localhost:8000/v1/monitor/token_auth/';
+                break;
+
+            case 'prod':
+                this.URL_VALID = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/token_check/';
+                this.TOKEN_URL = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/token_auth/';
+                break;
+
+            case 'native':
+                this.URL_VALID = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/token_check/';
+                this.TOKEN_URL = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/token_auth/';
+                break;
+        }
     }
 
     isValid() {

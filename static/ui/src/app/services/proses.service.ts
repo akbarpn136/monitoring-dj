@@ -4,16 +4,42 @@ import {Http, Response, Headers, RequestOptions, URLSearchParams} from "@angular
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {Observable} from "rxjs";
+import {environment} from "../../environments/environment";
 
 @Injectable()
 export class ProsesService {
-    private URL_ANGIN = 'http://localhost:8000/v1/monitor/angin/';
-    private URL_WINDROSE = 'http://localhost:8000/v1/monitor/windrose/';
-    private URL_RMS = 'http://localhost:8000/v1/monitor/rms/';
-    private URL_WATERFALL = 'http://localhost:8000/v1/monitor/waterfall/';
-    private URL_PDF = 'http://localhost:8000/v1/monitor/pdf/';
+    private URL_ANGIN: string;
+    private URL_WINDROSE: string;
+    private URL_RMS: string;
+    private URL_WATERFALL: string;
+    private URL_PDF: string;
 
     constructor(private http: Http) {
+        switch (environment.envName) {
+            case 'dev':
+                this.URL_ANGIN = 'http://localhost:8000/v1/monitor/angin/';
+                this.URL_WINDROSE = 'http://localhost:8000/v1/monitor/windrose/';
+                this.URL_RMS = 'http://localhost:8000/v1/monitor/rms/';
+                this.URL_WATERFALL = 'http://localhost:8000/v1/monitor/waterfall/';
+                this.URL_PDF = 'http://localhost:8000/v1/monitor/pdf/';
+                break;
+
+            case 'prod':
+                this.URL_ANGIN = 'http://localhost:8000/v1/monitor/angin/';
+                this.URL_WINDROSE = 'http://localhost:8000/v1/monitor/windrose/';
+                this.URL_RMS = 'http://localhost:8000/v1/monitor/rms/';
+                this.URL_WATERFALL = 'http://localhost:8000/v1/monitor/waterfall/';
+                this.URL_PDF = 'http://localhost:8000/v1/monitor/pdf/';
+                break;
+
+            case 'native':
+                this.URL_ANGIN = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/angin/';
+                this.URL_WINDROSE = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/windrose/';
+                this.URL_RMS = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/rms/';
+                this.URL_WATERFALL = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/waterfall/';
+                this.URL_PDF = 'http://monitoring.bbta3.bppt.go.id/v1/monitor/pdf/';
+                break;
+        }
     }
 
     ambilAtributAngin(date_from, date_to) {
