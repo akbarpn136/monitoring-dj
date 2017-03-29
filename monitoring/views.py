@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from django.contrib import messages
 from django.core import serializers
+from django.views.generic import TemplateView
 
 from .models import DaerahObjek, PilihanVisualisasi, DataAngin
 from .tambahan import conv_timestamp, gen_hex_colour_code
-from .tasks import do_windrose, do_pdf, do_wtr, do_angin, do_rms
+from .tasks import do_pdf, do_wtr, do_angin, do_rms
 
 import numpy as np
 import datetime
@@ -172,3 +173,7 @@ def get_rltm_dt(request, jns, ms):
                                      fields='akselerator5')
 
     return HttpResponse(data, content_type='application/json')
+
+
+class Utama(TemplateView):
+    template_name = 'master/base_ng.html'
