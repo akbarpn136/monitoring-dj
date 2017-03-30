@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormGroup, FormBuilder, Validators} from "@angular/forms";
 import {ProsesService} from "../services/proses.service";
+import {IMyOptions} from "mydatepicker";
 
 declare let Plotly;
 
@@ -20,6 +21,7 @@ export class WindroseComponent implements OnInit {
     private isError: boolean;
     private key: any;
     private message: any;
+    private myDatePickerOptions: IMyOptions;
 
     constructor(private fb: FormBuilder,
                 private windrose: ProsesService) {
@@ -28,6 +30,9 @@ export class WindroseComponent implements OnInit {
     ngOnInit() {
         this.title = 'Grafik Windrose Angin';
         this.deskripsi = 'Persentase kecepatan angin dalam beberapa arah.';
+        this.myDatePickerOptions = {
+            dateFormat: 'yyyy-mm-dd',
+        };
         this.createWindroseForm();
     }
 
@@ -41,8 +46,8 @@ export class WindroseComponent implements OnInit {
     }
 
     onFormWindroseSubmit(obj) {
-        let date_from = obj['date_from'];
-        let date_to = obj['date_to'];
+        let date_from = obj['date_from']['formatted'];
+        let date_to = obj['date_to']['formatted'];
         let vmax = obj['v_max'];
         let step = obj['v_step'];
 

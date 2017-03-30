@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, Validators, FormGroup} from "@angular/forms";
 import {ProsesService} from "../services/proses.service";
+import {IMyOptions} from 'mydatepicker';
 
 declare let Plotly: any;
 
@@ -21,19 +22,24 @@ export class AnginComponent implements OnInit {
     private data: any;
     private layout: any;
     private data_angin: any;
+    private myDatePickerOptions: IMyOptions;
 
     constructor(private fb: FormBuilder,
                 private proses: ProsesService) {
     }
 
     ngOnInit() {
+        this.title = 'Grafik Distribusi';
+        this.deskripsi = 'Grafik perubahan kecepatan angin terhadap waktu untuk arah angin yang ditentukan beserta getaran';
+
+        this.myDatePickerOptions = {
+            dateFormat: 'yyyy-mm-dd',
+        };
+
         this.createFormAngin({});
     }
 
     createFormAngin(data) {
-        this.title = 'Grafik Distribusi';
-        this.deskripsi = 'Grafik perubahan kecepatan angin terhadap waktu untuk arah angin yang ditentukan beserta getaran';
-
         this.anginForm = this.fb.group({
             date_from: this.fb.control(data.date_from, Validators.compose([Validators.required])),
             date_to: this.fb.control(data.date_to, Validators.compose([Validators.required])),
@@ -43,7 +49,7 @@ export class AnginComponent implements OnInit {
 
     onFormAnginSubmit(val) {
         this.isShow = true;
-        this.proses.ambilAtributAngin(val['date_from'], val['date_to']).subscribe(
+        this.proses.ambilAtributAngin(val['date_from']['formatted'], val['date_to']['formatted']).subscribe(
             obj => {
                 let key_x: any[] = [];
                 let key_y: any[] = [];

@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormGroup, Validators, FormBuilder} from "@angular/forms";
 import {ProsesService} from "../services/proses.service";
+import {IMyOptions} from "mydatepicker";
 
 declare let Plotly;
 
@@ -21,6 +22,7 @@ export class WaterfallComponent implements OnInit {
     key: any;
     message: any;
     private isSimplified: boolean = true;
+    private myDatePickerOptions: IMyOptions;
 
     constructor(private fb: FormBuilder,
                 private waterfall: ProsesService) {
@@ -29,6 +31,9 @@ export class WaterfallComponent implements OnInit {
     ngOnInit() {
         this.title = 'Grafik Waterfall Getaran';
         this.deskripsi = 'Besaran Frekuensi, kecepatan angin, dan amplitudo getaran dalam grafik 3D.';
+        this.myDatePickerOptions = {
+            dateFormat: 'yyyy-mm-dd',
+        };
         this.createWaterfallForm();
     }
 
@@ -71,8 +76,8 @@ export class WaterfallComponent implements OnInit {
     }
 
     onFormWaterfallSubmit(obj) {
-        let date_from = obj['date_from'];
-        let date_to = obj['date_to'];
+        let date_from = obj['date_from']['formatted'];
+        let date_to = obj['date_to']['formatted'];
         let vmax = obj['v_max'];
         let step = obj['v_step'];
         let arah = obj['arah'];
