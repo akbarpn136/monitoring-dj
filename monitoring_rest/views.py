@@ -9,6 +9,7 @@ from scipy import stats
 from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.views.generic import ListView
 from rest_framework import generics, permissions
+from raven.contrib.django.raven_compat.models import client
 
 from monitoring import models
 from . import serializers
@@ -98,39 +99,43 @@ class MonitorWindrose(generics.ListAPIView):
         return HttpResponse(json.dumps(obj, sort_keys=True), content_type='Applications/json')
 
     def do_task(self, vmax, step):
-        v_range = numpy.arange(0.0, vmax + step, step).tolist()
-        total = self.get_queryset().count()
+        try:
+            v_range = numpy.arange(0.0, vmax + step, step).tolist()
+            total = self.get_queryset().count()
 
-        if total > 0:
-            obj = [{
-                       'id': i,
-                       'persentase': [
-                           (self.get_queryset().filter(kompas__contains='UT', grup_kecepatan__gte=v,
-                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
-                           (self.get_queryset().filter(kompas__contains='TL', grup_kecepatan__gte=v,
-                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
-                           (self.get_queryset().filter(kompas__contains='TM', grup_kecepatan__gte=v,
-                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
-                           (self.get_queryset().filter(kompas__contains='TG', grup_kecepatan__gte=v,
-                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
-                           (self.get_queryset().filter(kompas__contains='SL', grup_kecepatan__gte=v,
-                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
-                           (self.get_queryset().filter(kompas__contains='BD', grup_kecepatan__gte=v,
-                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
-                           (self.get_queryset().filter(kompas__contains='BR', grup_kecepatan__gte=v,
-                                                       grup_kecepatan__lt=v + step).count() / total) * 100,
-                           (self.get_queryset().filter(kompas__contains='BL', grup_kecepatan__gte=v,
-                                                       grup_kecepatan__lt=v + step).count() / total) * 100
-                       ],
-                       'nama': str(v)[0:3] + ' - ' + str(v + step)[0:3] + ' m/s',
-                       'kompas': ['Utara', 'Timur Laut', 'Timur', 'Tenggara', 'Selatan', 'Barat Daya', 'Barat',
-                                  'Barat Laut'],
-                   } for i, v in enumerate(v_range)]
-        else:
+            if total > 0:
+                obj = [{
+                    'id': i,
+                    'persentase': [
+                        (self.get_queryset().filter(kompas__contains='UT', grup_kecepatan__gte=v,
+                                                    grup_kecepatan__lt=v + step).count() / total) * 100,
+                        (self.get_queryset().filter(kompas__contains='TL', grup_kecepatan__gte=v,
+                                                    grup_kecepatan__lt=v + step).count() / total) * 100,
+                        (self.get_queryset().filter(kompas__contains='TM', grup_kecepatan__gte=v,
+                                                    grup_kecepatan__lt=v + step).count() / total) * 100,
+                        (self.get_queryset().filter(kompas__contains='TG', grup_kecepatan__gte=v,
+                                                    grup_kecepatan__lt=v + step).count() / total) * 100,
+                        (self.get_queryset().filter(kompas__contains='SL', grup_kecepatan__gte=v,
+                                                    grup_kecepatan__lt=v + step).count() / total) * 100,
+                        (self.get_queryset().filter(kompas__contains='BD', grup_kecepatan__gte=v,
+                                                    grup_kecepatan__lt=v + step).count() / total) * 100,
+                        (self.get_queryset().filter(kompas__contains='BR', grup_kecepatan__gte=v,
+                                                    grup_kecepatan__lt=v + step).count() / total) * 100,
+                        (self.get_queryset().filter(kompas__contains='BL', grup_kecepatan__gte=v,
+                                                    grup_kecepatan__lt=v + step).count() / total) * 100
+                    ],
+                    'nama': str(v)[0:3] + ' - ' + str(v + step)[0:3] + ' m/s',
+                    'kompas': ['Utara', 'Timur Laut', 'Timur', 'Tenggara', 'Selatan', 'Barat Daya', 'Barat',
+                               'Barat Laut'],
+                } for i, v in enumerate(v_range)]
+            else:
 
-            obj = [{}]
+                obj = [{}]
 
-        return obj
+            return obj
+
+        except:
+            client.captureException()
 
 
 class MonitorPdf(generics.ListAPIView):
@@ -159,19 +164,22 @@ class MonitorPdf(generics.ListAPIView):
     def do_task(self):
         obj = {}
 
-        # Kumpulan data angin
-        list_kecepatan = [v.grup_kecepatan for v in self.get_queryset()]
+        try:
+            # Kumpulan data angin
+            list_kecepatan = [v.grup_kecepatan for v in self.get_queryset()]
 
-        if self.get_queryset().count() > 0:
-            # Fit a normal distribution to the data:
-            fitting = stats.norm.fit(list_kecepatan)
+            if self.get_queryset().count() > 0:
+                # Fit a normal distribution to the data:
+                fitting = stats.norm.fit(list_kecepatan)
 
-            # Generate PDF
-            list_kecepatan_pdf = stats.norm.pdf(list_kecepatan, fitting[0], fitting[1]).tolist()
+                # Generate PDF
+                list_kecepatan_pdf = stats.norm.pdf(list_kecepatan, fitting[0], fitting[1]).tolist()
 
-        else:
-            fitting = numpy.zeros(4).tolist()
-            list_kecepatan_pdf = numpy.zeros(len(list_kecepatan)).tolist()
+            else:
+                fitting = numpy.zeros(4).tolist()
+                list_kecepatan_pdf = numpy.zeros(len(list_kecepatan)).tolist()
+        except:
+            client.captureException()
 
         obj['kecepatan_x'] = list_kecepatan
         obj['kecepatan_y'] = list_kecepatan_pdf
@@ -202,32 +210,35 @@ class MonitorRMS(generics.ListAPIView):
         data_x = []
         data_y = []
 
-        for i, v in enumerate(v_range):
-            v = round(v, 1)
+        try:
+            for i, v in enumerate(v_range):
+                v = round(v, 1)
 
-            if arah == 'all':
-                data_acc = models.DataAngin.objects.filter(
-                    kecepatan__gte=v,
-                    kecepatan__lt=v + step
-                ).values_list(
-                    'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
-                )
-            else:
-                data_acc = models.DataAngin.objects.filter(
-                    kecepatan__gte=v,
-                    kecepatan__lt=v + step,
-                    kompas__contains=arah
-                ).values_list(
-                    'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
-                )
+                if arah == 'all':
+                    data_acc = models.DataAngin.objects.filter(
+                        kecepatan__gte=v,
+                        kecepatan__lt=v + step
+                    ).values_list(
+                        'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
+                    )
+                else:
+                    data_acc = models.DataAngin.objects.filter(
+                        kecepatan__gte=v,
+                        kecepatan__lt=v + step,
+                        kompas__contains=arah
+                    ).values_list(
+                        'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
+                    )
 
-            numpy_data_acc = numpy.array(data_acc)
-            numpy_data_acc_square = numpy.square(numpy_data_acc)
-            numpy_data_acc_mean = numpy.mean(numpy_data_acc_square)
-            numpy_data_acc_root = numpy.sqrt(numpy_data_acc_mean)
+                numpy_data_acc = numpy.array(data_acc)
+                numpy_data_acc_square = numpy.square(numpy_data_acc)
+                numpy_data_acc_mean = numpy.mean(numpy_data_acc_square)
+                numpy_data_acc_root = numpy.sqrt(numpy_data_acc_mean)
 
-            data_x.append(str(v) + ' - ' + str(v + step))
-            data_y.append(numpy_data_acc_root)
+                data_x.append(str(v) + ' - ' + str(v + step))
+                data_y.append(numpy_data_acc_root)
+        except:
+            client.captureException()
 
         obj['x'] = data_x
         obj['y'] = data_y
@@ -299,61 +310,96 @@ class MonitorWaterfall(generics.ListAPIView):
         data_y = []
         data_z = []
 
-        if self.simplified:
-            stat = '''
-                            SELECT
-                              id,
-                              tanggal,
-                              waktu,
-                              arah,
-                              grup_kecepatan,
-                              akselerator1,
-                              akselerator2,
-                              akselerator3,
-                              akselerator4,
-                              akselerator5,
-                              EXTRACT(MINUTE FROM waktu)    AS by_minute,
-                              EXTRACT(HOUR FROM waktu)      AS by_hour,
-                              ROUND(AVG(grup_kecepatan), 1) AS STATS
-                            FROM monitoring_dataangin
-                            WHERE
-                              tanggal >= %s
-                              AND
-                              tanggal <= %s
-                              AND
-                              arah >= %s
-                              AND
-                              arah <= %s
-                            GROUP BY
-                              by_hour, by_minute
-                            ORDER BY
-                              tanggal ASC,
-                              waktu ASC
-                            '''
-            if self.arah == 'BR':
-                q = models.DataAngin.objects.raw(stat, [self.kwargs['date_from'],
-                                                        self.kwargs['date_to'],
-                                                        '225', '315'])
+        try:
+            if self.simplified:
+                stat = '''
+                                SELECT
+                                  id,
+                                  tanggal,
+                                  waktu,
+                                  arah,
+                                  grup_kecepatan,
+                                  akselerator1,
+                                  akselerator2,
+                                  akselerator3,
+                                  akselerator4,
+                                  akselerator5,
+                                  EXTRACT(MINUTE FROM waktu)    AS by_minute,
+                                  EXTRACT(HOUR FROM waktu)      AS by_hour,
+                                  ROUND(AVG(grup_kecepatan), 1) AS STATS
+                                FROM monitoring_dataangin
+                                WHERE
+                                  tanggal >= %s
+                                  AND
+                                  tanggal <= %s
+                                  AND
+                                  arah >= %s
+                                  AND
+                                  arah <= %s
+                                GROUP BY
+                                  by_hour, by_minute
+                                ORDER BY
+                                  tanggal ASC,
+                                  waktu ASC
+                                '''
+                if self.arah == 'BR':
+                    q = models.DataAngin.objects.raw(stat, [self.kwargs['date_from'],
+                                                            self.kwargs['date_to'],
+                                                            '225', '315'])
 
-                q = list(q)
+                    q = list(q)
+
+                else:
+                    q = models.DataAngin.objects.raw(stat, [self.kwargs['date_from'],
+                                                            self.kwargs['date_to'],
+                                                            '45', '135'])
+
+                    q = list(q)
+
+                kecepatan_mean = [v.STATS for v in q]
+                kecepatan, idx = numpy.unique(kecepatan_mean, return_index=True)
+                idx = sorted(idx.tolist())
+
+                for k, dt in enumerate(idx):
+                    if k < len(idx) - 1:
+                        if self.arah == 'BR':
+                            data_acc = self.get_queryset().filter(
+                                waktu__gte=q[idx[k]].waktu,
+                                waktu__lte=q[idx[k + 1]].waktu,
+                                arah__gte=225.0,
+                                arah__lte=315.0
+                            ).values_list(
+                                'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
+                            )
+
+                        else:
+                            data_acc = self.get_queryset().filter(
+                                waktu__gte=q[idx[k]].waktu,
+                                waktu__lte=q[idx[k + 1]].waktu,
+                                arah__gte=45.0,
+                                arah__lte=135.0
+                            ).values_list(
+                                'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
+                            )
+
+                        N, v1, v2 = DoFFT(data_acc, self.sample_spacing, self.first_cutoff, self.second_cutoff,
+                                          self.order).make_fft()
+
+                        data_x.append([str(kecepatan[k])] * N)
+                        data_y.append(v1)
+                        data_z.append(v2)
 
             else:
-                q = models.DataAngin.objects.raw(stat, [self.kwargs['date_from'],
-                                                        self.kwargs['date_to'],
-                                                        '45', '135'])
+                v_range = numpy.arange(0.0, self.vmax, self.step).tolist()
+                for i, v in enumerate(v_range):
+                    v = round(v, 1)
 
-                q = list(q)
-
-            kecepatan_mean = [v.STATS for v in q]
-            kecepatan, idx = numpy.unique(kecepatan_mean, return_index=True)
-            idx = sorted(idx.tolist())
-
-            for k, dt in enumerate(idx):
-                if k < len(idx) - 1:
                     if self.arah == 'BR':
                         data_acc = self.get_queryset().filter(
-                            waktu__gte=q[idx[k]].waktu,
-                            waktu__lte=q[idx[k + 1]].waktu,
+                            waktu__gte=self.wkt_awl,
+                            waktu__lte=self.wkt_akh,
+                            kecepatan__gte=v,
+                            kecepatan__lt=v + self.step,
                             arah__gte=225.0,
                             arah__lte=315.0
                         ).values_list(
@@ -362,8 +408,10 @@ class MonitorWaterfall(generics.ListAPIView):
 
                     else:
                         data_acc = self.get_queryset().filter(
-                            waktu__gte=q[idx[k]].waktu,
-                            waktu__lte=q[idx[k + 1]].waktu,
+                            waktu__gte=self.wkt_awl,
+                            waktu__lte=self.wkt_akh,
+                            kecepatan__gte=v,
+                            kecepatan__lt=v + self.step,
                             arah__gte=45.0,
                             arah__lte=135.0
                         ).values_list(
@@ -373,45 +421,11 @@ class MonitorWaterfall(generics.ListAPIView):
                     N, v1, v2 = DoFFT(data_acc, self.sample_spacing, self.first_cutoff, self.second_cutoff,
                                       self.order).make_fft()
 
-                    data_x.append([str(kecepatan[k])] * N)
+                    data_x.append([str(v)[:3] + ' - ' + str(v + self.step)[:3]] * N)
                     data_y.append(v1)
                     data_z.append(v2)
-
-        else:
-            v_range = numpy.arange(0.0, self.vmax, self.step).tolist()
-            for i, v in enumerate(v_range):
-                v = round(v, 1)
-
-                if self.arah == 'BR':
-                    data_acc = self.get_queryset().filter(
-                        waktu__gte=self.wkt_awl,
-                        waktu__lte=self.wkt_akh,
-                        kecepatan__gte=v,
-                        kecepatan__lt=v + self.step,
-                        arah__gte=225.0,
-                        arah__lte=315.0
-                    ).values_list(
-                        'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
-                    )
-
-                else:
-                    data_acc = self.get_queryset().filter(
-                        waktu__gte=self.wkt_awl,
-                        waktu__lte=self.wkt_akh,
-                        kecepatan__gte=v,
-                        kecepatan__lt=v + self.step,
-                        arah__gte=45.0,
-                        arah__lte=135.0
-                    ).values_list(
-                        'akselerator1', 'akselerator2', 'akselerator3', 'akselerator4', 'akselerator5'
-                    )
-
-                N, v1, v2 = DoFFT(data_acc, self.sample_spacing, self.first_cutoff, self.second_cutoff,
-                                  self.order).make_fft()
-
-                data_x.append([str(v)[:3] + ' - ' + str(v + self.step)[:3]] * N)
-                data_y.append(v1)
-                data_z.append(v2)
+        except:
+            client.captureException()
 
         obj['x'] = data_x
         obj['y'] = data_y
