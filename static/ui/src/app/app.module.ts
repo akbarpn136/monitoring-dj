@@ -1,5 +1,6 @@
+import * as Raven from 'raven-js';
 import {BrowserModule} from '@angular/platform-browser';
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {ReactiveFormsModule} from '@angular/forms';
@@ -19,6 +20,16 @@ import {PdfComponent} from './pdf/pdf.component';
 import {LoginComponent} from './login/login.component';
 import {GuardService} from "./services/guard.service";
 import {AuthService} from "./services/auth.service";
+
+Raven
+  .config('https://5206a016bc224509a447da0d7f00f35f@sentry.io/232316')
+  .install();
+
+export class RavenErrorHandler implements ErrorHandler {
+  handleError(err:any) : void {
+    Raven.captureException(err);
+  }
+}
 
 @NgModule({
     declarations: [
@@ -42,7 +53,11 @@ import {AuthService} from "./services/auth.service";
         route,
         MyDatePickerModule
     ],
-    providers: [AuthService, GuardService],
+    providers: [
+        { provide: ErrorHandler, useClass: RavenErrorHandler },
+        AuthService,
+        GuardService
+    ],
     bootstrap: [AppComponent]
 })
 export class AppModule {
